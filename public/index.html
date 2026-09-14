@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>КГДП - Расписание</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,'Segoe UI',Roboto,system-ui,sans-serif;background:#e8f4f8;min-height:100vh;padding:16px;display:flex;justify-content:center;align-items:flex-start}
+        .container{max-width:1400px;width:100%;background:#ffffff;border-radius:24px;padding:24px 28px 20px;box-shadow:0 8px 40px rgba(26,82,118,0.12);border:1px solid rgba(26,82,118,0.06)}
+        .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding-bottom:16px;border-bottom:2px solid #d6eaf8;margin-bottom:12px}
+        .header-left{display:flex;align-items:center;gap:14px;cursor:pointer}
+        .logo-icon{width:44px;height:44px;background:linear-gradient(135deg,#5dade2,#2e86c1);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff;box-shadow:0 2px 12px rgba(46,134,193,0.25);flex-shrink:0;user-select:none}
+        .title-block .title{font-size:22px;font-weight:700;color:#1a5276;line-height:1.2}
+        .title-block .title-sub{font-size:13px;color:#5d8aa8;font-weight:400}
+        .header-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+        .date-range{background:#d6eaf8;padding:6px 18px;border-radius:40px;font-size:14px;font-weight:500;color:#1a5276;letter-spacing:0.3px;white-space:nowrap}
+        .clock{background:#eaf4fa;padding:6px 16px 6px 14px;border-radius:40px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+        .clock-time{font-size:22px;font-weight:700;color:#1a5276;letter-spacing:0.5px;min-width:60px;text-align:center}
+        .clock-seconds{font-size:14px;font-weight:300;color:#5d8aa8;min-width:20px}
+        .clock-separator{color:#85b8d6;animation:blink 1s step-end infinite}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+        .clock-divider{width:1px;height:24px;background:#c5dce8}
+        .clock-date{display:flex;flex-direction:column;line-height:1.2}
+        .clock-date-day{font-size:14px;font-weight:600;color:#1a5276}
+        .clock-date-full{font-size:11px;color:#5d8aa8}
+        .week-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 12px;flex-wrap:wrap}
+        .week-nav .week-label{font-size:17px;font-weight:600;color:#1a5276}
+        .week-nav .nav-buttons{display:flex;gap:8px}
+        .week-nav button{background:#eaf4fa;border:1px solid #c5dce8;color:#1a5276;padding:7px 18px;border-radius:30px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;font-family:inherit}
+        .week-nav button:hover{background:#d4e6f0;border-color:#85b8d6}
+        .week-nav button:active{transform:scale(0.96)}
+        .tabs{display:flex;gap:8px;margin:6px 0 12px;flex-wrap:wrap}
+        .tab-btn{background:#f0f7fb;border:1px solid #d6eaf8;color:#2c5f7a;padding:10px 18px;border-radius:40px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.25s;font-family:inherit;text-align:left;line-height:1.3}
+        .tab-btn:hover{background:#d6eaf8;border-color:#85b8d6}
+        .tab-btn.active{background:linear-gradient(135deg,#5dade2,#2e86c1);color:#fff;border-color:#2e86c1;box-shadow:0 2px 16px rgba(46,134,193,0.25)}
+        .tab-btn .addr{font-size:10px;font-weight:300;opacity:0.7;display:block}
+        .tab-btn.active .addr{opacity:0.85}
+        .tab-content{display:none}
+        .tab-content.active{display:block}
+        .table-wrap{overflow-x:auto;border-radius:14px;background:#f8fbfd;padding:4px;margin-top:6px;max-height:65vh;overflow-y:auto;border:1px solid #e8f0f5}
+        .table-wrap::-webkit-scrollbar{width:5px;height:5px}
+        .table-wrap::-webkit-scrollbar-track{background:#eaf4fa;border-radius:10px}
+        .table-wrap::-webkit-scrollbar-thumb{background:#85b8d6;border-radius:10px}
+        table{width:100%;border-collapse:collapse;font-size:13px;min-width:900px}
+        thead th{background:#d6eaf8;color:#1a5276;font-weight:600;padding:10px 8px;text-align:center;border-bottom:2px solid #b8d4e8;font-size:12px;letter-spacing:0.3px;position:sticky;top:0;z-index:10}
+        thead th:first-child{text-align:left;padding-left:14px;min-width:140px}
+        thead th:nth-child(2){text-align:left;padding-left:14px;min-width:110px}
+        thead th:last-child{background:#eaf4fa;color:#5d8aa8;border-bottom-color:#d0dce6}
+        tbody td{padding:7px 6px;border-bottom:1px solid #eaf0f5;vertical-align:middle;text-align:center;font-size:12px;color:#1a2a3a}
+        tbody td:first-child{text-align:left;padding-left:14px;font-weight:500;color:#1a3a52;font-size:13px}
+        tbody td:nth-child(2){text-align:left;padding-left:14px;font-size:12px;color:#5d7a8e}
+        tbody td:last-child{background:#f5f8fa;color:#7a8f9e;font-weight:400}
+        .doctor-row td{background:#ffffff}
+        .doctor-row td:first-child{font-weight:600;color:#1a5276}
+        .spec-row td{background:#eaf4fa;font-weight:600;color:#2e86c1;font-size:12px;letter-spacing:0.3px;padding:6px 14px}
+        .spec-row td:first-child{color:#1a5276}
+        .time-cell{font-weight:500;color:#1a2a3a;padding:5px 4px;border-radius:4px;min-width:70px}
+        .time-cell.off{color:#a0b8c8;font-weight:300}
+        .time-cell.weekend{color:#7a8f9e;font-weight:400;background:#f0f5f8}
+        .time-cell.vacation{color:#e67e22;font-weight:500;background:#fef9f0}
+        .time-cell.sick{color:#e74c3c;font-weight:500;background:#fdf0ee}
+        .toolbar{display:flex;gap:10px;margin:12px 0 10px;flex-wrap:wrap;align-items:center}
+        .toolbar button{background:#eaf4fa;border:1px solid #c5dce8;color:#1a5276;padding:8px 20px;border-radius:30px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.25s;font-family:inherit;display:flex;align-items:center;gap:6px}
+        .toolbar button:hover{background:#d4e6f0;border-color:#85b8d6;transform:translateY(-1px)}
+        .toolbar button.primary{background:linear-gradient(135deg,#5dade2,#2e86c1);color:#fff;border-color:#2e86c1;box-shadow:0 2px 12px rgba(46,134,193,0.2)}
+        .toolbar button.primary:hover{box-shadow:0 4px 20px rgba(46,134,193,0.3);transform:translateY(-1px)}
+        .footer{margin-top:14px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#7a8f9e;border-top:1px solid #e8f0f5;padding-top:12px;flex-wrap:wrap;gap:8px}
+        .footer .hint{color:#a0b8c8;font-size:11px}
+        .footer .status{display:flex;align-items:center;gap:10px;color:#5d8aa8}
+        .dot{width:7px;height:7px;border-radius:50%;background:#27ae60;display:inline-block;animation:pulse-dot 2s infinite}
+        @keyframes pulse-dot{0%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.85)}100%{opacity:1;transform:scale(1)}}
+        .online-badge{background:#27ae60;color:#fff;padding:2px 12px;border-radius:40px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+        .online-badge.offline{background:#e74c3c}
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(26,42,58,0.92);color:#fff;padding:12px 28px;border-radius:50px;font-size:14px;z-index:9999;opacity:0;transition:opacity 0.3s;border:1px solid rgba(93,173,226,0.2);backdrop-filter:blur(8px);pointer-events:none;max-width:90%;text-align:center}
+        .toast.show{opacity:1}
+        .toast.success{border-color:#27ae60}
+        .toast.error{border-color:#e74c3c}
+
+        /* ===== АДМИН-ПАНЕЛЬ ===== */
+        .admin-panel{display:none;background:#f8fbfd;border:2px dashed #d6eaf8;border-radius:16px;padding:24px;margin-top:16px}
+        .admin-panel.show{display:block}
+        .mode-btn{transition:all 0.3s;border:none;cursor:pointer;font-family:inherit}
+        .mode-btn:hover{background:#eaf4fa !important;color:#1a5276 !important}
+        .mode-btn.active{background:linear-gradient(135deg,#5dade2,#2e86c1) !important;color:#fff !important;box-shadow:0 2px 12px rgba(46,134,193,0.2)}
+        .upload-zone{border:2px dashed #d6eaf8;border-radius:16px;padding:30px 20px;text-align:center;cursor:pointer;transition:all 0.3s;background:#ffffff}
+        .upload-zone:hover{border-color:#5dade2;background:#f0f7fb}
+        .upload-zone.dragover{border-color:#2e86c1;background:#eaf4fa}
+        .upload-zone .icon{font-size:36px;display:block;margin-bottom:8px}
+        .upload-zone .text{color:#1a5276;font-weight:500}
+        .upload-zone .hint{color:#85b8d6;font-size:13px;margin-top:4px}
+        .admin-panel .btn{background:linear-gradient(135deg,#5dade2,#2e86c1);color:#fff;border:none;padding:10px 24px;border-radius:40px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.3s;margin-top:12px}
+        .admin-panel .btn:hover{box-shadow:0 4px 20px rgba(46,134,193,0.3);transform:translateY(-1px)}
+        .admin-panel .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+        .admin-panel .btn.danger{background:#e74c3c}
+        .admin-panel .btn.danger:hover{background:#c0392b}
+        .admin-panel .btn.secondary{background:#eaf4fa;color:#1a5276}
+        .admin-panel .btn.secondary:hover{background:#d4e6f0}
+        .admin-panel .btn.success{background:#27ae60}
+        .admin-panel .btn.success:hover{background:#219a52}
+        .admin-panel .btn-group{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+        .admin-panel .btn-group .btn{flex:1;min-width:100px;text-align:center}
+        .admin-panel .status{margin-top:12px;padding:10px 14px;border-radius:10px;display:none;font-size:13px}
+        .admin-panel .status.success{display:block;background:#eafaf1;color:#1a7a3a;border:1px solid #a9dfbf}
+        .admin-panel .status.error{display:block;background:#fdedec;color:#922b21;border:1px solid #f5b7b1}
+        .admin-panel .status.info{display:block;background:#eaf4fa;color:#1a5276;border:1px solid #aed6f1}
+        .admin-panel .preview{margin-top:12px;display:none}
+        .admin-panel .preview.show{display:block}
+        .admin-panel .preview table{width:100%;font-size:11px;border-collapse:collapse}
+        .admin-panel .preview th,.admin-panel .preview td{padding:4px 6px;border:1px solid #d6eaf8;text-align:left}
+        .admin-panel .preview th{background:#d6eaf8;color:#1a5276}
+        .admin-panel .stats{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap}
+        .admin-panel .stats .card{background:#ffffff;padding:10px 16px;border-radius:10px;flex:1;min-width:70px;text-align:center;border:1px solid #e8f0f5}
+        .admin-panel .stats .card .num{font-size:20px;font-weight:700;color:#1a5276}
+        .admin-panel .stats .card .label{font-size:10px;color:#85b8d6}
+        .file-input{display:none}
+
+        /* ===== РУЧНОЙ ВВОД ===== */
+        .manual-input .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+        .manual-input .row label{font-size:12px;color:#1a5276;font-weight:500;min-width:60px}
+        .manual-input .row input,.manual-input .row select{flex:1;min-width:80px;padding:8px 12px;border:1px solid #d6eaf8;border-radius:8px;font-size:13px;font-family:inherit;background:#ffffff}
+        .manual-input .row input:focus,.manual-input .row select:focus{border-color:#5dade2;outline:none;box-shadow:0 0 0 3px rgba(93,173,226,0.15)}
+        .day-inputs{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+        .day-inputs input{width:100%;padding:6px 4px;border:1px solid #d6eaf8;border-radius:6px;font-size:11px;text-align:center;font-family:inherit}
+        .day-inputs input:focus{border-color:#5dade2;outline:none;box-shadow:0 0 0 3px rgba(93,173,226,0.15)}
+        .day-label{font-size:9px;color:#5d8aa8;text-align:center;display:block;font-weight:600;margin-bottom:2px}
+        .btn-add{background:#27ae60;color:#fff;border:none;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.3s;font-family:inherit}
+        .btn-add:hover{background:#219a52;transform:translateY(-1px)}
+        .doctor-list{max-height:250px;overflow-y:auto;background:#f8fbfd;border-radius:10px;padding:10px}
+        .doctor-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#ffffff;border-radius:8px;margin-bottom:6px;border:1px solid #e8f0f5;font-size:12px;transition:all 0.2s}
+        .doctor-item:hover{border-color:#5dade2;box-shadow:0 2px 8px rgba(93,173,226,0.1)}
+        .doctor-item .name{font-weight:600;color:#1a5276;flex:1}
+        .doctor-item .info{color:#5d8aa8;font-size:11px;margin:0 10px}
+        .doctor-item .btn-remove{background:#e74c3c;color:#fff;border:none;padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;transition:all 0.2s}
+        .doctor-item .btn-remove:hover{background:#c0392b;transform:scale(1.05)}
+
+        /* ===== ТЕКСТОВЫЙ ВВОД ТАБЛИЦЫ ===== */
+        .table-text-input{width:100%;min-height:150px;padding:12px;border:1px solid #d6eaf8;border-radius:10px;font-family:'Courier New',monospace;font-size:12px;line-height:1.6;resize:vertical;background:#ffffff}
+        .table-text-input:focus{border-color:#5dade2;outline:none;box-shadow:0 0 0 3px rgba(93,173,226,0.15)}
+
+        .password-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:10000;justify-content:center;align-items:center}
+        .password-overlay.show{display:flex}
+        .password-box{background:#ffffff;border-radius:24px;padding:40px 32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center}
+        .password-box h2{color:#1a5276;margin-bottom:8px;font-size:22px}
+        .password-box p{color:#5d8aa8;font-size:14px;margin-bottom:20px}
+        .password-box input{width:100%;padding:12px 16px;border:2px solid #d6eaf8;border-radius:12px;font-size:16px;outline:none;transition:border 0.3s;text-align:center;letter-spacing:4px}
+        .password-box input:focus{border-color:#5dade2}
+        .password-box .btn{background:linear-gradient(135deg,#5dade2,#2e86c1);color:#fff;border:none;padding:12px 30px;border-radius:40px;font-size:16px;font-weight:500;cursor:pointer;transition:all 0.3s;width:100%;margin-top:12px}
+        .password-box .btn:hover{box-shadow:0 4px 20px rgba(46,134,193,0.3);transform:translateY(-1px)}
+        .password-box .error{color:#e74c3c;font-size:13px;margin-top:10px;display:none}
+        .password-box .error.show{display:block}
+        .password-box .hint{color:#85b8d6;font-size:12px;margin-top:12px}
+
+        @media(max-width:768px){body{padding:10px}.container{padding:14px 12px 16px;border-radius:18px}.header{flex-direction:column;align-items:stretch;gap:8px}.header-left{gap:10px}.logo-icon{width:36px;height:36px;font-size:14px}.title-block .title{font-size:17px}.title-block .title-sub{font-size:11px}.header-right{justify-content:space-between;gap:8px}.date-range{font-size:11px;padding:4px 12px;white-space:normal}.clock{padding:4px 10px;gap:6px}.clock-time{font-size:17px;min-width:44px}.clock-seconds{font-size:12px}.clock-date-day{font-size:12px}.clock-date-full{font-size:10px}.clock-divider{height:18px}.week-nav{flex-direction:column;align-items:stretch;gap:8px}.week-nav .week-label{font-size:15px;text-align:center}.week-nav .nav-buttons{justify-content:center}.week-nav button{font-size:12px;padding:6px 14px}.tabs{gap:6px}.tab-btn{font-size:12px;padding:8px 14px;flex:1 1 auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700px}thead th{font-size:10px;padding:6px 4px}thead th:first-child{min-width:90px;padding-left:8px}thead th:nth-child(2){min-width:70px;padding-left:8px}tbody td{font-size:10px;padding:4px 3px}tbody td:first-child{font-size:11px;padding-left:8px}tbody td:nth-child(2){font-size:10px;padding-left:8px}.time-cell{font-size:10px;padding:3px 2px;min-width:50px}.spec-row td{font-size:10px;padding:4px 8px}.toolbar{gap:6px;justify-content:center}.toolbar button{font-size:11px;padding:6px 12px}.footer{flex-direction:column;text-align:center;gap:4px;font-size:10px}.footer .hint{font-size:10px}.toast{font-size:12px;padding:10px 20px;bottom:20px}.table-wrap{max-height:55vh}.admin-panel{padding:16px}.upload-zone{padding:20px 16px}.upload-zone .icon{font-size:28px}.admin-panel .btn{font-size:12px;padding:8px 16px}.admin-panel .btn-group .btn{min-width:70px}.password-box{padding:28px 20px}.password-box h2{font-size:18px}.day-inputs{grid-template-columns:repeat(4,1fr) !important}.manual-input .row{flex-direction:column;align-items:stretch}.manual-input .row label{min-width:auto;margin-bottom:4px}}
+        @media(max-width:480px){.container{padding:10px 8px 12px}.title-block .title{font-size:15px}.clock-time{font-size:15px;min-width:36px}.tab-btn{font-size:10px;padding:6px 10px}table{font-size:9px;min-width:550px}thead th{font-size:8px;padding:4px 3px}thead th:first-child{min-width:60px}tbody td{font-size:8px;padding:3px 2px}tbody td:first-child{font-size:9px}.time-cell{font-size:8px;padding:2px 1px;min-width:36px}.toolbar button{font-size:10px;padding:4px 10px}}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="header-left" id="logoClick">
+            <div class="logo-icon">ДП</div>
+            <div class="title-block">
+                <div class="title">ОБУЗ "Курская городская детская поликлиника"</div>
+                <div class="title-sub">Областное бюджетное учреждение здравоохранения</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="clock">
+                <span class="clock-time" id="hoursMinutes">00:00</span>
+                <span class="clock-separator">:</span>
+                <span class="clock-seconds" id="seconds">00</span>
+                <span class="clock-divider"></span>
+                <div class="clock-date">
+                    <span class="clock-date-day" id="weekday">Понедельник</span>
+                    <span class="clock-date-full" id="fullDate">31 августа 2026</span>
+                </div>
+            </div>
+            <div class="date-range" id="headerDateRange">31 – 06 сентября 2026</div>
+            <div class="online-badge" id="statusBadge">🟢 LIVE</div>
+        </div>
+    </div>
+
+    <div class="week-nav">
+        <div class="week-label" id="weekLabel">Неделя 31.08 – 06.09.2026</div>
+        <div class="nav-buttons">
+            <button id="prevWeekBtn">◀ Предыдущая</button>
+            <button id="nextWeekBtn">Следующая ▶</button>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <button class="primary" onclick="exportExcel()">📊 Экспорт в Excel</button>
+        <button onclick="forceRefresh()">🔄 Обновить</button>
+    </div>
+
+    <!-- АДМИН-ПАНЕЛЬ -->
+    <div class="admin-panel" id="adminPanel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #d6eaf8;flex-wrap:wrap;gap:8px;">
+            <h3 style="color:#1a5276;margin:0;font-size:18px;">⚙️ Управление расписанием</h3>
+            <button onclick="closeAdmin()" style="background:#e74c3c;color:#fff;border:none;padding:8px 20px;border-radius:30px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all 0.3s;">✕ Закрыть</button>
+        </div>
+
+        <!-- Переключатель режимов -->
+        <div style="background:#ffffff;border-radius:12px;padding:6px;display:flex;gap:6px;margin-bottom:20px;border:1px solid #e8f0f5;flex-wrap:wrap;">
+            <button class="mode-btn active" id="tabExcel" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;">📁 Excel</button>
+            <button class="mode-btn" id="tabImage" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;background:transparent;color:#5d8aa8;">🖼️ Скриншот</button>
+            <button class="mode-btn" id="tabWord" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;background:transparent;color:#5d8aa8;">📄 Word</button>
+            <button class="mode-btn" id="tabManual" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;background:transparent;color:#5d8aa8;">✏️ Вручную</button>
+            <button class="mode-btn" id="tabTable" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;background:transparent;color:#5d8aa8;">📋 Таблица</button>
+        </div>
+
+        <!-- РЕЖИМ 1: EXCEL -->
+        <div id="excelMode">
+            <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;">
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:6px;font-weight:600;">📂 Шаг 1: Загрузите Excel-файл</h4>
+                <p style="color:#85b8d6;font-size:12px;margin-bottom:14px;">Поддерживаются форматы .xls и .xlsx</p>
+                <div class="upload-zone" id="dropZone">
+                    <span class="icon">📂</span>
+                    <div class="text">Нажмите или перетащите Excel-файл</div>
+                    <div class="hint">Колонка A — врачи, B — кабинеты, C-I — дни недели</div>
+                    <input type="file" class="file-input" id="fileInput" accept=".xls,.xlsx">
+                </div>
+            </div>
+            <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;margin-top:14px;">
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:14px;font-weight:600;">📤 Шаг 2: Проверьте и опубликуйте</h4>
+                <div class="btn-group" style="margin-top:0;">
+                    <button class="btn secondary" id="previewBtn">👁️ Предпросмотр</button>
+                    <button class="btn" id="uploadBtn">📤 Опубликовать</button>
+                </div>
+                <button class="btn danger" id="clearBtn" style="width:100%;margin-top:10px;">🗑️ Очистить все данные</button>
+            </div>
+        </div>
+
+        <!-- РЕЖИМ 2: СКРИНШОТ -->
+        <div id="imageMode" style="display:none;">
+            <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;">
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:6px;font-weight:600;">🖼️ Загрузите скриншот расписания</h4>
+                <p style="color:#85b8d6;font-size:12px;margin-bottom:14px;">Поддерживаются PNG, JPG, JPEG. Скрипт распознает текст с помощью OCR (работает медленно, 30-60 сек).</p>
+                <div class="upload-zone" id="imageDropZone">
+                    <span class="icon">🖼️</span>
+                    <div class="text">Нажмите или перетащите скриншот</div>
+                    <div class="hint">PNG, JPG, JPEG</div>
+                    <input type="file" class="file-input" id="imageInput" accept="image/*">
+                </div>
+                <div id="ocrProgress" style="display:none;margin-top:14px;text-align:center;">
+                    <div style="background:#eaf4fa;border-radius:20px;padding:14px;">
+                        <div style="color:#1a5276;font-weight:600;font-size:13px;margin-bottom:6px;">⏳ Распознавание текста...</div>
+                        <div style="color:#85b8d6;font-size:11px;" id="ocrStatus">Подготовка...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- РЕЖИМ 3: WORD -->
+        <div id="wordMode" style="display:none;">
+            <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;">
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:6px;font-weight:600;">📄 Загрузите документ Word</h4>
+                <p style="color:#85b8d6;font-size:12px;margin-bottom:14px;">Поддерживаются .docx файлы. Скрипт извлечёт текст и таблицы.</p>
+                <div class="upload-zone" id="wordDropZone">
+                    <span class="icon">📄</span>
+                    <div class="text">Нажмите или перетащите Word-файл</div>
+                    <div class="hint">.docx</div>
+                    <input type="file" class="file-input" id="wordInput" accept=".docx">
+                </div>
+            </div>
+        </div>
+
+        <!-- РЕЖИМ 4: РУЧНОЙ ВВОД -->
+        <div id="manualMode" style="display:none;">
+            <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;">
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:14px;font-weight:600;">✏️ Добавьте врача вручную</h4>
+                <div class="manual-input">
+                    <div class="row">
+                        <label>ФИО врача *</label>
+                        <input type="text" id="manualName" placeholder="Например: Петрова Е.Н." style="flex:2;">
+                    </div>
+                    <div class="row">
+                        <label>Кабинет *</label>
+                        <input type="text" id="manualCabinet" placeholder="Например: уч.1, каб.218" style="flex:2;">
+                    </div>
+                    <div class="row">
+                        <label>Специализация</label>
+                        <input type="text" id="manualSpec" placeholder="Например: 👶 Участковый педиатр" style="flex:2;">
+                    </div>
+                    <div class="row">
+                        <label>Филиал</label>
+                        <select id="manualFilial" style="flex:1;">
+                            <option value="filial0">Филиал 0 (Главный)</option>
+                            <option value="filial1">Филиал №1</option>
+                            <option value="filial2">Филиал №2</option>
+                            <option value="filial3">Лаборатория</option>
+                        </select>
+                    </div>
+                    <div style="margin-top:14px;padding-top:14px;border-top:1px solid #e8f0f5;">
+                        <label style="font-size:13px;color:#1a5276;font-weight:600;display:block;margin-bottom:10px;">🕐 Время работы по дням</label>
+                        <div class="day-inputs">
+                            <div><span class="day-label">ПН</span><input type="text" id="m_d0" placeholder="08:00-14:00"></div>
+                            <div><span class="day-label">ВТ</span><input type="text" id="m_d1" placeholder="14:00-20:00"></div>
+                            <div><span class="day-label">СР</span><input type="text" id="m_d2" placeholder="08:00-14:00"></div>
+                            <div><span class="day-label">ЧТ</span><input type="text" id="m_d3" placeholder="14:00-20:00"></div>
+                            <div><span class="day-label">ПТ</span><input type="text" id="m_d4" placeholder="08:00-14:00"></div>
+                            <div><span class="day-label">СБ</span><input type="text" id="m_d5" placeholder="—"></div>
+                            <div><span class="day-label">ВС</span><input type="text" id="m_d6" placeholder="ВЫХОДНОЙ"></div>
+                        </div>
+                    </div>
+                    <button class="btn-add" id="addManualBtn" style="width:100%;margin-top:14px;">➕ Добавить врача в список</button>
+                </div>
+            </div>
+            <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;margin-top:14px;">
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:10px;font-weight:600;">📋 Список добавленных врачей</h4>
+                <div class="doctor-list" id="manualList">
+                    <div style="color:#85b8d6;text-align:center;font-size:12px;padding:20px;">Список пуст. Добавьте первого врача.</div>
+                </div>
+                <button class="btn success" id="publishManualBtn" style="width:100%;margin-top:14px;">📤 Опубликовать всех врачей</button>
+            </div>
+        </div>
+
+        <!-- РЕЖИМ 5: ВВОД ТАБЛИЦЫ ТЕКСТОМ -->
+        <div id="tableMode" style="display:none;">
+            <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;">
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:6px;font-weight:600;">📋 Введите таблицу текстом</h4>
+                <p style="color:#85b8d6;font-size:12px;margin-bottom:14px;">Вставьте данные в формате CSV или через табуляцию. Каждая строка — один врач.</p>
+                <div style="background:#eaf4fa;border-radius:10px;padding:12px;margin-bottom:14px;font-size:12px;color:#1a5276;">
+                    <strong>📌 Пример формата:</strong><br>
+                    <code style="font-size:11px;color:#2c5f7a;">Врач; Кабинет; Спец; ПН; ВТ; СР; ЧТ; ПТ; СБ; ВС</code><br>
+                    <code style="font-size:11px;color:#2c5f7a;">Петрова Е.Н.; уч.1, каб.218; Педиатр; 08:00-14:00; 14:00-20:00; ...</code>
+                </div>
+                <textarea class="table-text-input" id="tableTextInput" placeholder="Врач;Кабинет;Спец;ПН;ВТ;СР;ЧТ;ПТ;СБ;ВС
+Петрова Е.Н.;уч.1, каб.218;👶 Участковый педиатр;08:00-14:00;14:00-20:00;08:00-14:00;14:00-20:00;08:00-14:00;—;ВЫХОДНОЙ
+Гнесь К.В.;уч.3;👶 Участковый педиатр;08:00-14:00;14:00-20:00;08:00-14:00;14:00-20:00;08:00-14:00;—;ВЫХОДНОЙ"></textarea>
+                <div class="btn-group" style="margin-top:14px;">
+                    <button class="btn secondary" id="parseTableBtn">👁️ Разобрать таблицу</button>
+                    <button class="btn" id="publishTableBtn">📤 Опубликовать</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Статус -->
+        <div class="status" id="adminStatus"></div>
+
+        <!-- Статистика -->
+        <div class="stats" id="adminStats" style="display:none;margin-top:16px;">
+            <div class="card"><div class="num" id="statDoctors">0</div><div class="label">Врачей</div></div>
+            <div class="card"><div class="num" id="statFilials">0</div><div class="label">Филиалов</div></div>
+            <div class="card"><div class="num" id="statDays">7</div><div class="label">Дней</div></div>
+        </div>
+
+        <!-- Предпросмотр -->
+        <div class="preview" id="adminPreview" style="margin-top:16px;">
+            <h4 style="font-size:14px;color:#1a5276;margin-bottom:8px;font-weight:600;">📊 Предпросмотр данных</h4>
+            <div style="overflow-x:auto;background:#ffffff;border-radius:10px;padding:10px;border:1px solid #e8f0f5;">
+                <table id="previewTable"></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКИ ФИЛИАЛОВ -->
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="tab0">🏥 ОБУЗ "КГДП"<span class="addr">пр-т Энтузиастов, д. 18</span></button>
+        <button class="tab-btn" data-tab="tab1">🏥 Филиал №1<span class="addr">ул. Сумская, д. 37-б</span></button>
+        <button class="tab-btn" data-tab="tab2">🏥 Филиал №2<span class="addr">ул. Верхняя Казацкая, д. 152</span></button>
+        <button class="tab-btn" data-tab="tab3">🧪 Лаборатория / Стационар</button>
+    </div>
+
+    <div id="tab0" class="tab-content active"><div class="table-wrap"><table><thead><tr><th>ВРАЧ</th><th>Кабинет/Участок</th><th>ПН</th><th>ВТ</th><th>СР</th><th>ЧТ</th><th>ПТ</th><th>СБ</th><th>ВС</th></tr></thead><tbody id="tab0-body"></tbody></table></div></div>
+    <div id="tab1" class="tab-content"><div class="table-wrap"><table><thead><tr><th>ВРАЧ</th><th>Кабинет/Участок</th><th>ПН</th><th>ВТ</th><th>СР</th><th>ЧТ</th><th>ПТ</th><th>СБ</th><th>ВС</th></tr></thead><tbody id="tab1-body"></tbody></table></div></div>
+    <div id="tab2" class="tab-content"><div class="table-wrap"><table><thead><tr><th>ВРАЧ</th><th>Кабинет/Участок</th><th>ПН</th><th>ВТ</th><th>СР</th><th>ЧТ</th><th>ПТ</th><th>СБ</th><th>ВС</th></tr></thead><tbody id="tab2-body"></tbody></table></div></div>
+    <div id="tab3" class="tab-content"><div class="table-wrap"><table><thead><tr><th>Подразделение</th><th>Кабинет/Участок</th><th>ПН</th><th>ВТ</th><th>СР</th><th>ЧТ</th><th>ПТ</th><th>СБ</th><th>ВС</th></tr></thead><tbody id="tab3-body"></tbody></table></div></div>
+
+    <div class="footer">
+        <div class="status">
+            <span class="dot"></span>
+            <span id="statusText">Данные актуальны</span>
+            <span id="updateDate"></span>
+        </div>
+        <div class="hint">📋 Данные обновляются автоматически в реальном времени</div>
+    </div>
+</div>
+
+<div class="password-overlay" id="passwordOverlay">
+    <div class="password-box">
+        <h2>🔐 Доступ к админке</h2>
+        <p>Введите пароль для управления расписанием</p>
+        <input type="password" id="passwordInput" placeholder="Введите пароль" maxlength="10">
+        <div class="error" id="passwordError">❌ Неверный пароль</div>
+        <button class="btn" id="passwordBtn">Войти</button>
+        <div class="hint">Пароль по умолчанию: <strong>12345</strong></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="importmap">
+{
+    "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js"
+    }
+}
+</script>
+
+<script type="module">
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, onSnapshot, setDoc, deleteDoc } from 'firebase/firestore';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCFUskb44FK5_skkE_jwUCpn09AqHT89WI",
+    authDomain: "obuz-kgdp-8-0-1-2.firebaseapp.com",
+    projectId: "obuz-kgdp-8-0-1-2",
+    storageBucket: "obuz-kgdp-8-0-1-2.firebasestorage.app",
+    messagingSenderId: "498340071826",
+    appId: "1:498340071826:web:376d47e68d028ed9b0994b",
+    measurementId: "G-82MWG1YT55"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const ADMIN_PASSWORD = "12345";
+var clickCount = 0;
+var clickTimer = null;
+var isAdmin = false;
+
+var allData = null;
+var currentWeekOffset = 0;
+var isConnected = false;
+var uploadedData = null;
+var manualDoctors = [];
+var baseDate = getMonday(new Date());
+
+function getMonday(date) {
+    var d = new Date(date);
+    var day = d.getDay();
+    var diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    d.setDate(diff);
+    d.setHours(0,0,0,0);
+    return d;
+}
+
+function showToast(message, type) {
+    var toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast show ' + (type || '');
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(function() { toast.classList.remove('show'); }, 4000);
+}
+
+function showAdminStatus(message, type) {
+    var el = document.getElementById('adminStatus');
+    el.textContent = message;
+    el.className = 'status ' + type;
+}
+
+window.closeAdmin = function() {
+    document.getElementById('adminPanel').classList.remove('show');
+    showToast('✅ Админ-панель закрыта', 'success');
+};
+
+// ================================================================
+// ПАРСИНГ EXCEL
+// ================================================================
+
+function smartParseExcel(data) {
+    try {
+        var workbook = XLSX.read(data, {type: 'array'});
+        var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        var json = XLSX.utils.sheet_to_json(firstSheet, {header: 1, defval: ''});
+        
+        console.log('📊 Всего строк:', json.length);
+        
+        var headerRowIndex = -1;
+        var dayCols = [];
+        var dayNames = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
+        var fullDayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+        
+        for (var i = 0; i < Math.min(json.length, 50); i++) {
+            var row = json[i];
+            if (!row) continue;
+            var found = 0;
+            var tempCols = [];
+            for (var j = 0; j < row.length; j++) {
+                var cell = String(row[j] || '').trim().toUpperCase();
+                if (cell === 'ПН' || cell === 'ПН.') { found++; tempCols[0] = j; }
+                else if (cell === 'ВТ' || cell === 'ВТ.') { found++; tempCols[1] = j; }
+                else if (cell === 'СР' || cell === 'СР.') { found++; tempCols[2] = j; }
+                else if (cell === 'ЧТ' || cell === 'ЧТ.') { found++; tempCols[3] = j; }
+                else if (cell === 'ПТ' || cell === 'ПТ.') { found++; tempCols[4] = j; }
+                else if (cell === 'СБ' || cell === 'СБ.') { found++; tempCols[5] = j; }
+                else if (cell === 'ВС' || cell === 'ВС.') { found++; tempCols[6] = j; }
+            }
+            if (found >= 5) {
+                headerRowIndex = i;
+                dayCols = tempCols;
+                break;
+            }
+        }
+        
+        if (headerRowIndex === -1) {
+            for (var i = 0; i < Math.min(json.length, 50); i++) {
+                var row = json[i];
+                if (!row) continue;
+                var found = 0;
+                var tempCols = [];
+                for (var j = 0; j < row.length; j++) {
+                    var cell = String(row[j] || '').trim();
+                    if (fullDayNames.indexOf(cell) !== -1) {
+                        tempCols[fullDayNames.indexOf(cell)] = j;
+                        found++;
+                    }
+                }
+                if (found >= 5) {
+                    headerRowIndex = i;
+                    dayCols = tempCols;
+                    break;
+                }
+            }
+        }
+        
+        if (headerRowIndex === -1) {
+            dayCols = [2, 3, 4, 5, 6, 7, 8];
+        }
+        
+        var doctors = [];
+        var currentSpec = '';
+        var specKeywords = ['педиатр', 'хирург', 'невролог', 'офтальмолог', 'лор', 'отоларинголог', 
+            'гастроэнтеролог', 'инфекционист', 'рентгенолог', 'физиотерапевт', 'массажист', 
+            'эндокринолог', 'нефролог', 'травматолог', 'психиатр', 'акушер', 'гинеколог', 
+            'стоматолог', 'ультразвук', 'функциональная диагностика', 'лечебная физкультура',
+            'неотложная помощь', 'лаборатория', 'стационар', 'сестринское', 'акушерство',
+            'гастроэнтерология', 'инфекционные', 'рентгенология', 'оториноларингология', 
+            'офтальмология', 'психиатрия', 'травматология', 'ультразвуковая диагностика',
+            'детская хирургия', 'детская эндокринология', 'неврология', 'нефрология',
+            'физиотерапия', 'стоматология'];
+        
+        for (var i = headerRowIndex + 1; i < json.length; i++) {
+            var row = json[i];
+            if (!row || row.length < 2) continue;
+            
+            var firstCell = String(row[0] || '').trim();
+            var secondCell = String(row[1] || '').trim();
+            
+            if (firstCell === '' && secondCell === '') continue;
+            if (/\d{2}\.\d{2}/.test(firstCell) && firstCell.length <= 6) continue;
+            
+            var skipWords = ['расписание', 'Расписание', 'распечатано', 'Д-наблюдение', 
+                'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+            if (skipWords.some(function(w) { return firstCell.includes(w); })) continue;
+            
+            var isSpec = specKeywords.some(function(w) { 
+                return firstCell.toLowerCase().includes(w) || secondCell.toLowerCase().includes(w); 
+            });
+            if (isSpec && firstCell.length > 3 && !firstCell.includes('м/с')) {
+                currentSpec = firstCell;
+                continue;
+            }
+            
+            var isName = /[А-Яа-яЁё]+\s+[А-Яа-яЁё]\./.test(firstCell) || 
+                         firstCell.includes('м/с') || 
+                         firstCell.includes('медсестра');
+            if (firstCell.includes('уч.') || firstCell.includes('каб.')) continue;
+            if (!isName || firstCell.length < 3) continue;
+            
+            var hours = [null];
+            var hasTime = false;
+            for (var d = 0; d < 7; d++) {
+                var col = dayCols[d];
+                var cell = (col !== undefined && col < row.length) ? String(row[col] || '').trim() : '';
+                if (cell === '' || cell === '—' || cell === '-') { cell = '—'; }
+                else { hasTime = true; }
+                hours.push(cell);
+            }
+            while (hours.length < 8) hours.push('—');
+            if (!hasTime) continue;
+            
+            var filialKey = 'filial0';
+            var fullText = (firstCell + ' ' + secondCell + ' ' + currentSpec).toLowerCase();
+            if (fullText.includes('ф1') || fullText.includes('сумская') || fullText.includes('клыкова')) filialKey = 'filial1';
+            else if (fullText.includes('ф2') || fullText.includes('казацкая') || fullText.includes('верхняя')) filialKey = 'filial2';
+            else if (fullText.includes('лаборатория') || fullText.includes('стационар')) filialKey = 'filial3';
+            
+            doctors.push({
+                name: firstCell,
+                cabinet: secondCell || '—',
+                spec: currentSpec || '👶 Педиатрия',
+                hours: hours,
+                filial: filialKey
+            });
+        }
+        
+        var result = {filial0: [], filial1: [], filial2: [], filial3: []};
+        doctors.forEach(function(doc) { result[doc.filial].push(doc); });
+        
+        var total = Object.keys(result).reduce(function(sum, key) { return sum + result[key].length; }, 0);
+        if (total === 0) {
+            showAdminStatus('❌ Не найдено ни одного врача.', 'error');
+            return null;
+        }
+        return result;
+    } catch (e) {
+        showAdminStatus('❌ Ошибка: ' + e.message, 'error');
+        return null;
+    }
+}
+
+// ================================================================
+// ОБРАБОТКА СКРИНШОТА (OCR)
+// ================================================================
+
+async function processImage(file) {
+    var progress = document.getElementById('ocrProgress');
+    var status = document.getElementById('ocrStatus');
+    progress.style.display = 'block';
+    status.textContent = 'Инициализация OCR...';
+    showAdminStatus('⏳ Распознавание текста со скриншота...', 'info');
+    
+    try {
+        var worker = await Tesseract.createWorker('rus+eng', 1, {
+            logger: function(m) {
+                if (m.status === 'recognizing text') {
+                    status.textContent = 'Распознавание: ' + Math.round(m.progress * 100) + '%';
+                }
+            }
+        });
+        var result = await worker.recognize(file);
+        await worker.terminate();
+        
+        var text = result.data.text;
+        console.log('📸 Распознанный текст:', text);
+        
+        progress.style.display = 'none';
+        
+        if (!text || text.length < 10) {
+            showAdminStatus('❌ Не удалось распознать текст. Попробуйте другой скриншот.', 'error');
+            return;
+        }
+        
+        // Парсим распознанный текст
+        var parsed = parseTextTable(text);
+        if (parsed) {
+            uploadedData = parsed;
+            showPreview(parsed);
+            var total = Object.keys(parsed).reduce(function(s, k) { return s + parsed[k].length; }, 0);
+            showAdminStatus('✅ Распознано врачей: ' + total, 'success');
+            document.getElementById('uploadBtn').disabled = false;
+        } else {
+            showAdminStatus('❌ Не удалось распознать врачей. Проверьте качество скриншота.', 'error');
+        }
+    } catch (e) {
+        progress.style.display = 'none';
+        showAdminStatus('❌ Ошибка OCR: ' + e.message, 'error');
+    }
+}
+
+// ================================================================
+// ОБРАБОТКА WORD
+// ================================================================
+
+async function processWord(file) {
+    showAdminStatus('⏳ Чтение Word-файла...', 'info');
+    
+    try {
+        var arrayBuffer = await file.arrayBuffer();
+        var result = await mammoth.extractRawText({arrayBuffer: arrayBuffer});
+        var text = result.value;
+        console.log('📄 Текст из Word:', text);
+        
+        if (!text || text.length < 10) {
+            showAdminStatus('❌ Word-файл пустой.', 'error');
+            return;
+        }
+        
+        var parsed = parseTextTable(text);
+        if (parsed) {
+            uploadedData = parsed;
+            showPreview(parsed);
+            var total = Object.keys(parsed).reduce(function(s, k) { return s + parsed[k].length; }, 0);
+            showAdminStatus('✅ Извлечено врачей: ' + total, 'success');
+            document.getElementById('uploadBtn').disabled = false;
+        } else {
+            showAdminStatus('❌ Не удалось извлечь врачей из Word.', 'error');
+        }
+    } catch (e) {
+        showAdminStatus('❌ Ошибка Word: ' + e.message, 'error');
+    }
+}
+
+// ================================================================
+// ПАРСИНГ ТЕКСТА (общий для OCR, Word, таблицы)
+// ================================================================
+
+function parseTextTable(text) {
+    try {
+        var lines = text.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
+        var doctors = [];
+        var currentSpec = '';
+        var specKeywords = ['педиатр', 'хирург', 'невролог', 'офтальмолог', 'лор', 'отоларинголог', 
+            'гастроэнтеролог', 'инфекционист', 'рентгенолог', 'физиотерапевт', 'массажист', 
+            'эндокринолог', 'нефролог', 'травматолог', 'психиатр', 'акушер', 'гинеколог', 
+            'стоматолог', 'ультразвук', 'лаборатория', 'стационар'];
+        
+        lines.forEach(function(line) {
+            // Разделяем по ; или табуляции
+            var parts = line.split(/[;\t|]/).map(function(p) { return p.trim(); });
+            if (parts.length < 3) return;
+            
+            var firstCell = parts[0] || '';
+            var secondCell = parts[1] || '';
+            
+            if (firstCell === '' || firstCell.length < 2) return;
+            if (/\d{2}\.\d{2}/.test(firstCell) && firstCell.length <= 6) return;
+            
+            var skipWords = ['расписание', 'Расписание', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+            if (skipWords.some(function(w) { return firstCell.includes(w); })) return;
+            
+            var isSpec = specKeywords.some(function(w) { return firstCell.toLowerCase().includes(w); });
+            if (isSpec && firstCell.length > 3 && !firstCell.includes('м/с')) {
+                currentSpec = firstCell;
+                return;
+            }
+            
+            var isName = /[А-Яа-яЁё]+\s+[А-Яа-яЁё]\./.test(firstCell) || firstCell.includes('м/с');
+            if (!isName) return;
+            
+            var hours = [null];
+            var hasTime = false;
+            for (var d = 2; d < Math.min(parts.length, 9); d++) {
+                var cell = parts[d] || '—';
+                if (cell !== '—' && cell !== '' && cell !== '-') hasTime = true;
+                if (cell === '' || cell === '-') cell = '—';
+                hours.push(cell);
+            }
+            while (hours.length < 8) hours.push('—');
+            if (!hasTime) return;
+            
+            var filialKey = 'filial0';
+            var fullText = (firstCell + ' ' + secondCell + ' ' + currentSpec).toLowerCase();
+            if (fullText.includes('ф1') || fullText.includes('сумская')) filialKey = 'filial1';
+            else if (fullText.includes('ф2') || fullText.includes('казацкая')) filialKey = 'filial2';
+            else if (fullText.includes('лаборатория') || fullText.includes('стационар')) filialKey = 'filial3';
+            
+            doctors.push({
+                name: firstCell,
+                cabinet: secondCell || '—',
+                spec: currentSpec || '👶 Педиатрия',
+                hours: hours,
+                filial: filialKey
+            });
+        });
+        
+        var result = {filial0: [], filial1: [], filial2: [], filial3: []};
+        doctors.forEach(function(doc) { result[doc.filial].push(doc); });
+        
+        var total = Object.keys(result).reduce(function(sum, key) { return sum + result[key].length; }, 0);
+        if (total === 0) return null;
+        return result;
+    } catch (e) {
+        console.error('Ошибка парсинга текста:', e);
+        return null;
+    }
+}
+
+// ================================================================
+// ПАРСИНГ ТЕКСТОВОЙ ТАБЛИЦЫ
+// ================================================================
+
+function parseTableText() {
+    var text = document.getElementById('tableTextInput').value.trim();
+    if (!text) {
+        showAdminStatus('⚠️ Введите данные таблицы.', 'error');
+        return;
+    }
+    
+    var parsed = parseTextTable(text);
+    if (parsed) {
+        uploadedData = parsed;
+        showPreview(parsed);
+        var total = Object.keys(parsed).reduce(function(s, k) { return s + parsed[k].length; }, 0);
+        showAdminStatus('✅ Разобрано врачей: ' + total + '. Нажмите "Опубликовать".', 'success');
+        showToast('✅ Таблица разобрана!', 'success');
+    } else {
+        showAdminStatus('❌ Не удалось разобрать таблицу. Проверьте формат.', 'error');
+    }
+}
+
+// ================================================================
+// FIRESTORE
+// ================================================================
+
+function loadDataFromFirestore() {
+    const docRef = doc(db, "schedule", "main");
+    onSnapshot(docRef, (snapshot) => {
+        if (snapshot.exists()) {
+            allData = snapshot.data();
+            renderAllTables();
+            document.getElementById('statusBadge').textContent = '🟢 LIVE';
+            document.getElementById('statusBadge').className = 'online-badge';
+            document.getElementById('statusText').textContent = 'Данные актуальны (Real-time)';
+            updateLastUpdate();
+            isConnected = true;
+        } else {
+            allData = {filial0: [], filial1: [], filial2: [], filial3: []};
+            renderAllTables();
+            document.getElementById('statusBadge').textContent = '🔴 НЕТ ДАННЫХ';
+            document.getElementById('statusBadge').className = 'online-badge offline';
+            document.getElementById('statusText').textContent = 'Нет расписания';
+        }
+    }, (error) => {
+        console.warn('Ошибка Firestore:', error);
+        document.getElementById('statusBadge').textContent = '🔴 OFFLINE';
+        document.getElementById('statusBadge').className = 'online-badge offline';
+        document.getElementById('statusText').textContent = '⚠️ Офлайн-режим';
+        isConnected = false;
+    });
+}
+
+// ================================================================
+// ОТОБРАЖЕНИЕ
+// ================================================================
+
+function getWeekDates(offset) {
+    var start = new Date(baseDate);
+    start.setDate(start.getDate() + offset * 7);
+    var dates = [];
+    for (var i = 0; i < 7; i++) {
+        var d = new Date(start);
+        d.setDate(d.getDate() + i);
+        dates.push(d);
+    }
+    return dates;
+}
+
+function formatDate(d) {
+    return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0');
+}
+
+function renderTable(tbodyId, filialKey) {
+    var tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    var doctors = (allData && allData[filialKey]) ? allData[filialKey] : [];
+    var html = '';
+    var currentSpec = '';
+    doctors.forEach(function(doc) {
+        var spec = doc.spec || '👶 Педиатрия';
+        if (spec !== currentSpec) {
+            currentSpec = spec;
+            html += '<tr class="spec-row"><td colspan="9">' + spec + '</td></tr>';
+        }
+        html += '<tr class="doctor-row"><td>' + doc.name + '</td><td>' + doc.cabinet + '</td>';
+        for (var i = 1; i <= 7; i++) {
+            var cell = doc.hours[i] || '—';
+            var cls = 'time-cell';
+            if (cell === 'ВЫХОДНОЙ') cls += ' weekend';
+            else if (cell.indexOf('Отпуск') !== -1) cls += ' vacation';
+            else if (cell.indexOf('Больничный') !== -1) cls += ' sick';
+            else if (cell === '—') cls += ' off';
+            if (i === 7 && cell !== 'ВЫХОДНОЙ') {
+                cell = 'ВЫХОДНОЙ';
+                cls = 'time-cell weekend';
+            }
+            html += '<td class="' + cls + '">' + cell + '</td>';
+        }
+        html += '</tr>';
+    });
+    tbody.innerHTML = html;
+}
+
+function renderAllTables() {
+    if (!allData) return;
+    renderTable('tab0-body', 'filial0');
+    renderTable('tab1-body', 'filial1');
+    renderTable('tab2-body', 'filial2');
+    renderTable('tab3-body', 'filial3');
+    
+    var dates = getWeekDates(currentWeekOffset);
+    if (dates.length > 0) {
+        var start = dates[0];
+        var end = dates[6];
+        var startStr = formatDate(start);
+        var endStr = formatDate(end);
+        document.getElementById('weekLabel').textContent = 'Неделя ' + startStr + ' – ' + endStr + ' ' + start.getFullYear();
+        document.getElementById('headerDateRange').textContent = startStr + ' – ' + endStr + ' ' + start.getFullYear();
+    }
+}
+
+function updateLastUpdate() {
+    var el = document.getElementById('updateDate');
+    if (el) el.textContent = '🔄 Обновлено: ' + new Date().toLocaleTimeString('ru-RU');
+}
+
+function showPreview(data) {
+    var preview = document.getElementById('adminPreview');
+    var table = document.getElementById('previewTable');
+    var html = '<thead><tr><th>Врач</th><th>Кабинет</th><th>ПН</th><th>ВТ</th><th>СР</th><th>ЧТ</th><th>ПТ</th><th>СБ</th><th>ВС</th></tr></thead><tbody>';
+    var total = 0, filialCount = 0;
+    var keys = ['filial0', 'filial1', 'filial2', 'filial3'];
+    var names = ['Филиал 0', 'Филиал 1', 'Филиал 2', 'Лаборатория'];
+    keys.forEach(function(key, idx) {
+        var doctors = data[key] || [];
+        if (doctors.length === 0) return;
+        filialCount++;
+        html += '<tr style="background:#eaf4fa;font-weight:bold;"><td colspan="9">' + names[idx] + ' (' + doctors.length + ')</td></tr>';
+        doctors.slice(0, 10).forEach(function(d) {
+            html += '<tr><td>' + d.name + '</td><td>' + d.cabinet + '</td>';
+            for (var i = 1; i <= 7; i++) html += '<td>' + (d.hours[i] || '—') + '</td>';
+            html += '</tr>';
+            total++;
+        });
+        if (doctors.length > 10) html += '<tr><td colspan="9" style="color:#85b8d6;text-align:center;">... и ещё ' + (doctors.length - 10) + '</td></tr>';
+    });
+    html += '</tbody>';
+    table.innerHTML = html;
+    preview.className = 'preview show';
+    document.getElementById('statDoctors').textContent = total;
+    document.getElementById('statFilials').textContent = filialCount;
+    document.getElementById('adminStats').style.display = 'flex';
+}
+
+async function saveToFirestore(data) {
+    try {
+        await setDoc(doc(db, "schedule", "main"), data);
+        showToast('✅ Данные опубликованы!', 'success');
+        showAdminStatus('✅ Данные успешно опубликованы!', 'success');
+        return true;
+    } catch (e) {
+        showToast('❌ Ошибка: ' + e.message, 'error');
+        showAdminStatus('❌ Ошибка: ' + e.message, 'error');
+        return false;
+    }
+}
+
+async function clearFirestore() {
+    if (!confirm('Вы уверены? Все данные будут удалены.')) return;
+    try {
+        await deleteDoc(doc(db, "schedule", "main"));
+        showToast('🗑️ Данные очищены', 'success');
+        showAdminStatus('✅ Данные удалены', 'success');
+        document.getElementById('adminPreview').className = 'preview';
+        document.getElementById('adminStats').style.display = 'none';
+        uploadedData = null;
+        manualDoctors = [];
+        updateManualList();
+    } catch (e) {
+        showToast('❌ Ошибка: ' + e.message, 'error');
+    }
+}
+
+// ================================================================
+// РУЧНОЙ ВВОД
+// ================================================================
+
+function addManualDoctor() {
+    var name = document.getElementById('manualName').value.trim();
+    var cabinet = document.getElementById('manualCabinet').value.trim();
+    var spec = document.getElementById('manualSpec').value.trim() || '👶 Педиатрия';
+    var filial = document.getElementById('manualFilial').value;
+    
+    if (!name || !cabinet) {
+        showAdminStatus('⚠️ Заполните ФИО и Кабинет.', 'error');
+        return;
+    }
+    
+    var hours = [null];
+    var dayIds = ['m_d0', 'm_d1', 'm_d2', 'm_d3', 'm_d4', 'm_d5', 'm_d6'];
+    var hasTime = false;
+    for (var i = 0; i < 7; i++) {
+        var val = document.getElementById(dayIds[i]).value.trim() || '—';
+        if (val !== '—' && val !== '') hasTime = true;
+        hours.push(val);
+    }
+    while (hours.length < 8) hours.push('—');
+    
+    if (!hasTime) {
+        showAdminStatus('⚠️ Заполните время хотя бы для одного дня.', 'error');
+        return;
+    }
+    
+    manualDoctors.push({name: name, cabinet: cabinet, spec: spec, hours: hours, filial: filial});
+    document.getElementById('manualName').value = '';
+    document.getElementById('manualCabinet').value = '';
+    document.getElementById('manualSpec').value = '';
+    dayIds.forEach(function(id) { document.getElementById(id).value = ''; });
+    updateManualList();
+    showToast('✅ Врач добавлен', 'success');
+}
+
+function removeManualDoctor(index) {
+    manualDoctors.splice(index, 1);
+    updateManualList();
+}
+
+function updateManualList() {
+    var list = document.getElementById('manualList');
+    if (manualDoctors.length === 0) {
+        list.innerHTML = '<div style="color:#85b8d6;text-align:center;font-size:12px;padding:20px;">Список пуст. Добавьте первого врача.</div>';
+        return;
+    }
+    var html = '';
+    manualDoctors.forEach(function(doc, idx) {
+        var filialNames = {'filial0':'Ф0','filial1':'Ф1','filial2':'Ф2','filial3':'Лаб'};
+        html += '<div class="doctor-item">';
+        html += '<span class="name">' + doc.name + '</span>';
+        html += '<span class="info">' + doc.cabinet + ' | ' + filialNames[doc.filial] + '</span>';
+        html += '<button class="btn-remove" onclick="removeManualDoctor(' + idx + ')">✕</button>';
+        html += '</div>';
+    });
+    list.innerHTML = html;
+}
+
+async function publishManualDoctors() {
+    if (manualDoctors.length === 0) {
+        showAdminStatus('⚠️ Нет врачей для публикации.', 'error');
+        return;
+    }
+    var combined = allData ? JSON.parse(JSON.stringify(allData)) : {filial0: [], filial1: [], filial2: [], filial3: []};
+    manualDoctors.forEach(function(doc) {
+        combined[doc.filial].push({name: doc.name, cabinet: doc.cabinet, spec: doc.spec, hours: doc.hours});
+    });
+    await saveToFirestore(combined);
+    manualDoctors = [];
+    updateManualList();
+    showToast('✅ Все врачи опубликованы!', 'success');
+}
+
+// ================================================================
+// ПАРОЛЬ
+// ================================================================
+
+document.getElementById('logoClick').addEventListener('click', function() {
+    clickCount++;
+    clearTimeout(clickTimer);
+    if (clickCount >= 5) {
+        clickCount = 0;
+        document.getElementById('passwordOverlay').classList.add('show');
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+        document.getElementById('passwordError').classList.remove('show');
+    } else {
+        clickTimer = setTimeout(function() { clickCount = 0; }, 2000);
+    }
+});
+
+function checkPassword() {
+    var input = document.getElementById('passwordInput');
+    var error = document.getElementById('passwordError');
+    if (input.value === ADMIN_PASSWORD) {
+        isAdmin = true;
+        document.getElementById('passwordOverlay').classList.remove('show');
+        document.getElementById('adminPanel').classList.add('show');
+        showToast('🔓 Доступ открыт', 'success');
+        input.value = '';
+        error.classList.remove('show');
+    } else {
+        error.classList.add('show');
+        input.value = '';
+        input.focus();
+        setTimeout(function() { error.classList.remove('show'); }, 3000);
+    }
+}
+
+document.getElementById('passwordBtn').addEventListener('click', checkPassword);
+document.getElementById('passwordInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkPassword();
+});
+
+// ================================================================
+// ПЕРЕКЛЮЧЕНИЕ РЕЖИМОВ
+// ================================================================
+
+var modeButtons = ['tabExcel', 'tabImage', 'tabWord', 'tabManual', 'tabTable'];
+var modeContents = ['excelMode', 'imageMode', 'wordMode', 'manualMode', 'tableMode'];
+
+modeButtons.forEach(function(btnId, idx) {
+    document.getElementById(btnId).addEventListener('click', function() {
+        modeButtons.forEach(function(id) {
+            document.getElementById(id).className = 'mode-btn';
+            document.getElementById(id).style.background = 'transparent';
+            document.getElementById(id).style.color = '#5d8aa8';
+        });
+        this.className = 'mode-btn active';
+        this.style.background = 'linear-gradient(135deg,#5dade2,#2e86c1)';
+        this.style.color = '#fff';
+        
+        modeContents.forEach(function(id) {
+            document.getElementById(id).style.display = 'none';
+        });
+        document.getElementById(modeContents[idx]).style.display = 'block';
+    });
+});
+
+// ================================================================
+// ОБРАБОТЧИКИ ФАЙЛОВ
+// ================================================================
+
+// Excel
+var dropZone = document.getElementById('dropZone');
+var fileInput = document.getElementById('fileInput');
+dropZone.addEventListener('click', function() { fileInput.click(); });
+dropZone.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', function(e) { e.preventDefault(); this.classList.remove('dragover'); });
+dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    this.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) processFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', function() {
+    if (this.files.length > 0) processFile(this.files[0]);
+});
+
+function processFile(file) {
+    showAdminStatus('⏳ Обработка Excel...', 'info');
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var parsed = smartParseExcel(new Uint8Array(e.target.result));
+            if (parsed) {
+                uploadedData = parsed;
+                showPreview(parsed);
+                var total = Object.keys(parsed).reduce(function(s, k) { return s + parsed[k].length; }, 0);
+                showAdminStatus('✅ Файл обработан! Найдено врачей: ' + total, 'success');
+                document.getElementById('uploadBtn').disabled = false;
+            }
+        } catch (err) {
+            showAdminStatus('❌ Ошибка: ' + err.message, 'error');
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+// Скриншот
+var imageDropZone = document.getElementById('imageDropZone');
+var imageInput = document.getElementById('imageInput');
+imageDropZone.addEventListener('click', function() { imageInput.click(); });
+imageDropZone.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('dragover'); });
+imageDropZone.addEventListener('dragleave', function(e) { e.preventDefault(); this.classList.remove('dragover'); });
+imageDropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    this.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) processImage(e.dataTransfer.files[0]);
+});
+imageInput.addEventListener('change', function() {
+    if (this.files.length > 0) processImage(this.files[0]);
+});
+
+// Word
+var wordDropZone = document.getElementById('wordDropZone');
+var wordInput = document.getElementById('wordInput');
+wordDropZone.addEventListener('click', function() { wordInput.click(); });
+wordDropZone.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('dragover'); });
+wordDropZone.addEventListener('dragleave', function(e) { e.preventDefault(); this.classList.remove('dragover'); });
+wordDropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    this.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) processWord(e.dataTransfer.files[0]);
+});
+wordInput.addEventListener('change', function() {
+    if (this.files.length > 0) processWord(this.files[0]);
+});
+
+// Кнопки
+document.getElementById('uploadBtn').addEventListener('click', function() {
+    if (uploadedData) saveToFirestore(uploadedData);
+    else showAdminStatus('⚠️ Сначала загрузите файл.', 'error');
+});
+
+document.getElementById('previewBtn').addEventListener('click', function() {
+    if (uploadedData) { showPreview(uploadedData); showToast('👁️ Предпросмотр', 'success'); }
+    else showAdminStatus('⚠️ Сначала загрузите файл.', 'error');
+});
+
+document.getElementById('clearBtn').addEventListener('click', clearFirestore);
+document.getElementById('addManualBtn').addEventListener('click', addManualDoctor);
+document.getElementById('publishManualBtn').addEventListener('click', publishManualDoctors);
+document.getElementById('parseTableBtn').addEventListener('click', parseTableText);
+document.getElementById('publishTableBtn').addEventListener('click', function() {
+    if (uploadedData) saveToFirestore(uploadedData);
+    else showAdminStatus('⚠️ Сначала разберите таблицу.', 'error');
+});
+
+window.exportExcel = function() {
+    if (!allData) return;
+    var excelData = [];
+    var filialNames = ['ОБУЗ "КГДП"', 'Филиал №1', 'Филиал №2', 'Лаборатория/Стационар'];
+    var filialKeys = ['filial0', 'filial1', 'filial2', 'filial3'];
+    filialKeys.forEach(function(key, fi) {
+        var doctors = allData[key] || [];
+        if (doctors.length === 0) return;
+        excelData.push([filialNames[fi] || key]);
+        excelData.push(['Врач', 'Кабинет/Участок', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']);
+        doctors.forEach(function(d) {
+            var row = [d.name, d.cabinet];
+            for (var i = 1; i <= 7; i++) row.push(d.hours[i] || '—');
+            excelData.push(row);
+        });
+        excelData.push([]);
+    });
+    try {
+        var wb = XLSX.utils.book_new();
+        var ws = XLSX.utils.aoa_to_sheet(excelData);
+        XLSX.utils.book_append_sheet(wb, ws, 'Расписание');
+        var wbout = XLSX.write(wb, {bookType: 'xlsx', type: 'array'});
+        var blob = new Blob([wbout], {type: 'application/octet-stream'});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'schedule_' + new Date().toISOString().slice(0,10) + '.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('📊 Excel файл создан!', 'success');
+    } catch(e) {
+        showToast('❌ Ошибка экспорта', 'error');
+    }
+};
+
+window.forceRefresh = function() {
+    if (isConnected) { showToast('🔄 Данные обновлены', 'success'); updateLastUpdate(); }
+    else showToast('⚠️ Нет подключения', 'error');
+};
+
+window.removeManualDoctor = removeManualDoctor;
+
+// ================================================================
+// НАВИГАЦИЯ
+// ================================================================
+
+document.querySelectorAll('.tabs .tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+        document.getElementById(this.dataset.tab).classList.add('active');
+    });
+});
+
+document.getElementById('prevWeekBtn').addEventListener('click', function() {
+    currentWeekOffset = Math.max(0, currentWeekOffset - 1);
+    renderAllTables();
+});
+
+document.getElementById('nextWeekBtn').addEventListener('click', function() {
+    currentWeekOffset++;
+    renderAllTables();
+});
+
+function updateClock() {
+    var now = new Date();
+    document.getElementById('hoursMinutes').textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('seconds').textContent = String(now.getSeconds()).padStart(2,'0');
+    var days = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+    document.getElementById('weekday').textContent = days[now.getDay()];
+    var months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+    document.getElementById('fullDate').textContent = now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+loadDataFromFirestore();
+
+console.log('✅ КГДП Расписание загружено!');
+console.log('🔐 5 кликов по "ДП" → пароль 12345');
+console.log('📁 Режимы: Excel, Скриншот (OCR), Word, Ручной ввод, Таблица');
+</script>
+</body>
+</html>
