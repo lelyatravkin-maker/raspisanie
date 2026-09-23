@@ -41,7 +41,7 @@
         .tab-btn.active .addr{opacity:0.85}
         .tab-content{display:none}
         .tab-content.active{display:block}
-.table-wrap{overflow-x:auto;border-radius:14px;background:#f8fbfd;padding:4px;margin-top:6px;max-height:65vh;overflow-y:auto;border:1px solid #e8f0f5}
+        .table-wrap{overflow-x:auto;border-radius:14px;background:#f8fbfd;padding:4px;margin-top:6px;max-height:65vh;overflow-y:auto;border:1px solid #e8f0f5}
         .table-wrap::-webkit-scrollbar{width:5px;height:5px}
         .table-wrap::-webkit-scrollbar-track{background:#eaf4fa;border-radius:10px}
         .table-wrap::-webkit-scrollbar-thumb{background:#85b8d6;border-radius:10px}
@@ -79,7 +79,8 @@
         .toast.show{opacity:1}
         .toast.success{border-color:#27ae60}
         .toast.error{border-color:#e74c3c}
-/* ===== АДМИН-ПАНЕЛЬ ===== */
+
+        /* ===== АДМИН-ПАНЕЛЬ ===== */
         .admin-panel{display:none;background:#f8fbfd;border:2px dashed #d6eaf8;border-radius:16px;padding:24px;margin-top:16px}
         .admin-panel.show{display:block}
         .mode-btn{transition:all 0.3s;border:none;cursor:pointer;font-family:inherit}
@@ -123,7 +124,7 @@
         .manual-input .row input,.manual-input .row select{flex:1;min-width:80px;padding:8px 12px;border:1px solid #d6eaf8;border-radius:8px;font-size:13px;font-family:inherit;background:#ffffff}
         .manual-input .row input:focus,.manual-input .row select:focus{border-color:#5dade2;outline:none;box-shadow:0 0 0 3px rgba(93,173,226,0.15)}
         .day-inputs{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.day-inputs input{width:100%;padding:6px 4px;border:1px solid #d6eaf8;border-radius:6px;font-size:11px;text-align:center;font-family:inherit}
+        .day-inputs input{width:100%;padding:6px 4px;border:1px solid #d6eaf8;border-radius:6px;font-size:11px;text-align:center;font-family:inherit}
         .day-inputs input:focus{border-color:#5dade2;outline:none;box-shadow:0 0 0 3px rgba(93,173,226,0.15)}
         .day-label{font-size:9px;color:#5d8aa8;text-align:center;display:block;font-weight:600;margin-bottom:2px}
         .btn-add{background:#27ae60;color:#fff;border:none;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.3s;font-family:inherit}
@@ -153,8 +154,7 @@
         .password-box .error.show{display:block}
         .password-box .hint{color:#85b8d6;font-size:12px;margin-top:12px}
 
-        @media(max-width:768px){body{padding:10px}.container{padding:14px 12px 16px;border-radius:18px}.header{flex-direction:column;align-items:stretch;gap:8px}.header-left{gap:10px}.logo-icon{width:36px;height:36px;font-size:14px}.title-block .title{font-size:17px}.title-block .title-sub{font-size:11px}.header-right{justify-content:space-between;gap:8px}.date-range{font-size:11px;padding:4px 12px;white-space:normal}.clock{padding:4px 10px;gap:6px}.clock-time{font-size:17px;min-width:44px}.clock-seconds{font-size:12px}.clock-date-day{font-size:12px}.clock-date-full{font-size:10px}.clock-divider{height:18px}.week-nav{flex-direction:column;align-items:stretch;gap:8px}.week-nav .week-label{font-size:15px;text-align:center}.week-nav .nav-buttons{justify-content:center}.week-nav button{font-size:12px;padding:6px 14px}.tabs{gap:6px}.tab-btn{font-size:12px;padding:8px 14px;flex:1 1
-auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700px}thead th{font-size:10px;padding:6px 4px}thead th:first-child{min-width:90px;padding-left:8px}thead th:nth-child(2){min-width:70px;padding-left:8px}tbody td{font-size:10px;padding:4px 3px}tbody td:first-child{font-size:11px;padding-left:8px}tbody td:nth-child(2){font-size:10px;padding-left:8px}.time-cell{font-size:10px;padding:3px 2px;min-width:50px}.spec-row td{font-size:10px;padding:4px 8px}.toolbar{gap:6px;justify-content:center}.toolbar button{font-size:11px;padding:6px 12px}.footer{flex-direction:column;text-align:center;gap:4px;font-size:10px}.footer .hint{font-size:10px}.toast{font-size:12px;padding:10px 20px;bottom:20px}.table-wrap{max-height:55vh}.admin-panel{padding:16px}.upload-zone{padding:20px 16px}.upload-zone .icon{font-size:28px}.admin-panel .btn{font-size:12px;padding:8px 16px}.admin-panel .btn-group .btn{min-width:70px}.password-box{padding:28px 20px}.password-box h2{font-size:18px}.day-inputs{grid-template-columns:repeat(4,1fr) !important}.manual-input .row{flex-direction:column;align-items:stretch}.manual-input .row label{min-width:auto;margin-bottom:4px}}
+        @media(max-width:768px){body{padding:10px}.container{padding:14px 12px 16px;border-radius:18px}.header{flex-direction:column;align-items:stretch;gap:8px}.header-left{gap:10px}.logo-icon{width:36px;height:36px;font-size:14px}.title-block .title{font-size:17px}.title-block .title-sub{font-size:11px}.header-right{justify-content:space-between;gap:8px}.date-range{font-size:11px;padding:4px 12px;white-space:normal}.clock{padding:4px 10px;gap:6px}.clock-time{font-size:17px;min-width:44px}.clock-seconds{font-size:12px}.clock-date-day{font-size:12px}.clock-date-full{font-size:10px}.clock-divider{height:18px}.week-nav{flex-direction:column;align-items:stretch;gap:8px}.week-nav .week-label{font-size:15px;text-align:center}.week-nav .nav-buttons{justify-content:center}.week-nav button{font-size:12px;padding:6px 14px}.tabs{gap:6px}.tab-btn{font-size:12px;padding:8px 14px;flex:1 1 auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700px}thead th{font-size:10px;padding:6px 4px}thead th:first-child{min-width:90px;padding-left:8px}thead th:nth-child(2){min-width:70px;padding-left:8px}tbody td{font-size:10px;padding:4px 3px}tbody td:first-child{font-size:11px;padding-left:8px}tbody td:nth-child(2){font-size:10px;padding-left:8px}.time-cell{font-size:10px;padding:3px 2px;min-width:50px}.spec-row td{font-size:10px;padding:4px 8px}.toolbar{gap:6px;justify-content:center}.toolbar button{font-size:11px;padding:6px 12px}.footer{flex-direction:column;text-align:center;gap:4px;font-size:10px}.footer .hint{font-size:10px}.toast{font-size:12px;padding:10px 20px;bottom:20px}.table-wrap{max-height:55vh}.admin-panel{padding:16px}.upload-zone{padding:20px 16px}.upload-zone .icon{font-size:28px}.admin-panel .btn{font-size:12px;padding:8px 16px}.admin-panel .btn-group .btn{min-width:70px}.password-box{padding:28px 20px}.password-box h2{font-size:18px}.day-inputs{grid-template-columns:repeat(4,1fr) !important}.manual-input .row{flex-direction:column;align-items:stretch}.manual-input .row label{min-width:auto;margin-bottom:4px}}
         @media(max-width:480px){.container{padding:10px 8px 12px}.title-block .title{font-size:15px}.clock-time{font-size:15px;min-width:36px}.tab-btn{font-size:10px;padding:6px 10px}table{font-size:9px;min-width:550px}thead th{font-size:8px;padding:4px 3px}thead th:first-child{min-width:60px}tbody td{font-size:8px;padding:3px 2px}tbody td:first-child{font-size:9px}.time-cell{font-size:8px;padding:2px 1px;min-width:36px}.toolbar button{font-size:10px;padding:4px 10px}}
     </style>
 </head>
@@ -181,7 +181,7 @@ auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700
                 </div>
             </div>
             <div class="date-range" id="headerDateRange">31 – 06 сентября 2026</div>
-            <div class="online-badge" id="statusBadge">🟢  LIVE</div>
+            <div class="online-badge" id="statusBadge">🟢 LIVE</div>
         </div>
     </div>
 
@@ -194,55 +194,55 @@ auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700
     </div>
 
     <div class="toolbar">
-        <button class="primary" onclick="exportExcel()">📊  Экспорт в Excel</button>
-        <button onclick="forceRefresh()">🔄  Обновить</button>
+        <button class="primary" onclick="exportExcel()">📊 Экспорт в Excel</button>
+        <button onclick="forceRefresh()">🔄 Обновить</button>
     </div>
 
     <!-- АДМИН-ПАНЕЛЬ -->
     <div class="admin-panel" id="adminPanel">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #d6eaf8;flex-wrap:wrap;gap:8px;">
-            <h3 style="color:#1a5276;margin:0;font-size:18px;">⚙️  Управление расписанием</h3>
+            <h3 style="color:#1a5276;margin:0;font-size:18px;">⚙️ Управление расписанием</h3>
             <button onclick="closeAdmin()" style="background:#e74c3c;color:#fff;border:none;padding:8px 20px;border-radius:30px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all 0.3s;">✕ Закрыть</button>
         </div>
 
         <!-- Переключатель режимов -->
-<div style="background:#ffffff;border-radius:12px;padding:6px;display:flex;gap:6px;margin-bottom:20px;border:1px solid #e8f0f5;flex-wrap:wrap;">
-            <button class="mode-btn active" id="tabExcel" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;">📁  Excel</button>
-            <button class="mode-btn" id="tabImage" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;background:transparent;color:#5d8aa8;">🖼️  Скриншот</button>
-            <button class="mode-btn" id="tabWord" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;background:transparent;color:#5d8aa8;">📄  Word</button>
-            <button class="mode-btn" id="tabManual" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;background:transparent;color:#5d8aa8;">✏️  Вручную</button>
+        <div style="background:#ffffff;border-radius:12px;padding:6px;display:flex;gap:6px;margin-bottom:20px;border:1px solid #e8f0f5;flex-wrap:wrap;">
+            <button class="mode-btn active" id="tabExcel" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;">📁 Excel</button>
+            <button class="mode-btn" id="tabImage" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;background:transparent;color:#5d8aa8;">🖼️ Скриншот</button>
+            <button class="mode-btn" id="tabWord" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;background:transparent;color:#5d8aa8;">📄 Word</button>
+            <button class="mode-btn" id="tabManual" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;background:transparent;color:#5d8aa8;">✏️ Вручную</button>
             <button class="mode-btn" id="tabTable" style="flex:1;min-width:90px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:600;background:transparent;color:#5d8aa8;">📋 Таблица</button>
         </div>
 
         <!-- РЕЖИМ 1: EXCEL -->
         <div id="excelMode">
             <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;">
-                <h4 style="color:#1a5276;font-size:14px;margin-bottom:6px;font-weight:600;">📂  Шаг 1: Загрузите Excel-файл</h4>
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:6px;font-weight:600;">📂 Шаг 1: Загрузите Excel-файл</h4>
                 <p style="color:#85b8d6;font-size:12px;margin-bottom:14px;">Поддерживаются форматы .xls и .xlsx</p>
                 <div class="upload-zone" id="dropZone">
-                    <span class="icon">📂 </span>
+                    <span class="icon">📂</span>
                     <div class="text">Нажмите или перетащите Excel-файл</div>
-                    <div class="hint">Колонка A/B — врачи и кабинеты, далее — дни недели</div>
+                    <div class="hint">Колонка A — врачи, B — кабинеты, C-I — дни недели</div>
                     <input type="file" class="file-input" id="fileInput" accept=".xls,.xlsx">
                 </div>
             </div>
             <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;margin-top:14px;">
                 <h4 style="color:#1a5276;font-size:14px;margin-bottom:14px;font-weight:600;">📤 Шаг 2: Проверьте и опубликуйте</h4>
                 <div class="btn-group" style="margin-top:0;">
-                    <button class="btn secondary" id="previewBtn">👁️  Предпросмотр</button>
+                    <button class="btn secondary" id="previewBtn">👁️ Предпросмотр</button>
                     <button class="btn" id="uploadBtn">📤 Опубликовать</button>
                 </div>
-                <button class="btn danger" id="clearBtn" style="width:100%;margin-top:10px;">🗑️  Очистить все данные</button>
+                <button class="btn danger" id="clearBtn" style="width:100%;margin-top:10px;">🗑️ Очистить все данные</button>
             </div>
         </div>
 
         <!-- РЕЖИМ 2: СКРИНШОТ -->
         <div id="imageMode" style="display:none;">
             <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;">
-                <h4 style="color:#1a5276;font-size:14px;margin-bottom:6px;font-weight:600;">🖼️  Загрузите скриншот расписания</h4>
-                <p style="color:#85b8d6;font-size:12px;margin-bottom:14px;">Поддерживаются PNG, JPG, JPEG. Скрипт распознает текст с помощью OCR (работает 30-60 сек).</p>
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:6px;font-weight:600;">🖼️ Загрузите скриншот расписания</h4>
+                <p style="color:#85b8d6;font-size:12px;margin-bottom:14px;">Поддерживаются PNG, JPG, JPEG. Скрипт распознает текст с помощью OCR (работает медленно, 30-60 сек).</p>
                 <div class="upload-zone" id="imageDropZone">
-                    <span class="icon">🖼️ </span>
+                    <span class="icon">🖼️</span>
                     <div class="text">Нажмите или перетащите скриншот</div>
                     <div class="hint">PNG, JPG, JPEG</div>
                     <input type="file" class="file-input" id="imageInput" accept="image/*">
@@ -254,15 +254,15 @@ auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700
                     </div>
                 </div>
             </div>
-</div>
+        </div>
 
         <!-- РЕЖИМ 3: WORD -->
         <div id="wordMode" style="display:none;">
             <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;">
-                <h4 style="color:#1a5276;font-size:14px;margin-bottom:6px;font-weight:600;">📄  Загрузите документ Word</h4>
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:6px;font-weight:600;">📄 Загрузите документ Word</h4>
                 <p style="color:#85b8d6;font-size:12px;margin-bottom:14px;">Поддерживаются .docx файлы. Скрипт извлечёт текст и таблицы.</p>
                 <div class="upload-zone" id="wordDropZone">
-                    <span class="icon">📄 </span>
+                    <span class="icon">📄</span>
                     <div class="text">Нажмите или перетащите Word-файл</div>
                     <div class="hint">.docx</div>
                     <input type="file" class="file-input" id="wordInput" accept=".docx">
@@ -273,7 +273,7 @@ auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700
         <!-- РЕЖИМ 4: РУЧНОЙ ВВОД -->
         <div id="manualMode" style="display:none;">
             <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;">
-                <h4 style="color:#1a5276;font-size:14px;margin-bottom:14px;font-weight:600;">✏️  Добавьте врача вручную</h4>
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:14px;font-weight:600;">✏️ Добавьте врача вручную</h4>
                 <div class="manual-input">
                     <div class="row">
                         <label>ФИО врача *</label>
@@ -285,13 +285,13 @@ auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700
                     </div>
                     <div class="row">
                         <label>Специализация</label>
-                        <input type="text" id="manualSpec" placeholder="Например: 👶  Участковый педиатр" style="flex:2;">
+                        <input type="text" id="manualSpec" placeholder="Например: 👶 Участковый педиатр" style="flex:2;">
                     </div>
                     <div class="row">
                         <label>Филиал</label>
                         <select id="manualFilial" style="flex:1;">
                             <option value="filial0">Филиал 0 (Главный)</option>
-                            <option value="filial1">Ф филиал №1</option>
+                            <option value="filial1">Филиал №1</option>
                             <option value="filial2">Филиал №2</option>
                             <option value="filial3">Лаборатория</option>
                         </select>
@@ -312,7 +312,7 @@ auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700
                 </div>
             </div>
             <div style="background:#ffffff;border-radius:14px;padding:20px;border:1px solid #e8f0f5;margin-top:14px;">
-<h4 style="color:#1a5276;font-size:14px;margin-bottom:10px;font-weight:600;">📋 Список добавленных врачей</h4>
+                <h4 style="color:#1a5276;font-size:14px;margin-bottom:10px;font-weight:600;">📋 Список добавленных врачей</h4>
                 <div class="doctor-list" id="manualList">
                     <div style="color:#85b8d6;text-align:center;font-size:12px;padding:20px;">Список пуст. Добавьте первого врача.</div>
                 </div>
@@ -326,14 +326,15 @@ auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700
                 <h4 style="color:#1a5276;font-size:14px;margin-bottom:6px;font-weight:600;">📋 Введите таблицу текстом</h4>
                 <p style="color:#85b8d6;font-size:12px;margin-bottom:14px;">Вставьте данные в формате CSV или через табуляцию. Каждая строка — один врач.</p>
                 <div style="background:#eaf4fa;border-radius:10px;padding:12px;margin-bottom:14px;font-size:12px;color:#1a5276;">
-                    <strong>📌  Пример формата:</strong><br>
+                    <strong>📌 Пример формата:</strong><br>
                     <code style="font-size:11px;color:#2c5f7a;">Врач; Кабинет; Спец; ПН; ВТ; СР; ЧТ; ПТ; СБ; ВС</code><br>
                     <code style="font-size:11px;color:#2c5f7a;">Петрова Е.Н.; уч.1, каб.218; Педиатр; 08:00-14:00; 14:00-20:00; ...</code>
                 </div>
                 <textarea class="table-text-input" id="tableTextInput" placeholder="Врач;Кабинет;Спец;ПН;ВТ;СР;ЧТ;ПТ;СБ;ВС
-Петрова Е.Н.;уч.1, каб.218;👶  Участковый педиатр;08:00-14:00;14:00-20:00;08:00-14:00;14:00-20:00;08:00-14:00;—;ВЫХОДНОЙ"></textarea>
+Петрова Е.Н.;уч.1, каб.218;👶 Участковый педиатр;08:00-14:00;14:00-20:00;08:00-14:00;14:00-20:00;08:00-14:00;—;ВЫХОДНОЙ
+Гнесь К.В.;уч.3;👶 Участковый педиатр;08:00-14:00;14:00-20:00;08:00-14:00;14:00-20:00;08:00-14:00;—;ВЫХОДНОЙ"></textarea>
                 <div class="btn-group" style="margin-top:14px;">
-                    <button class="btn secondary" id="parseTableBtn">👁️  Разобрать таблицу</button>
+                    <button class="btn secondary" id="parseTableBtn">👁️ Разобрать таблицу</button>
                     <button class="btn" id="publishTableBtn">📤 Опубликовать</button>
                 </div>
             </div>
@@ -351,7 +352,7 @@ auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700
 
         <!-- Предпросмотр -->
         <div class="preview" id="adminPreview" style="margin-top:16px;">
-            <h4 style="font-size:14px;color:#1a5276;margin-bottom:8px;font-weight:600;">📊  Предпросмотр данных</h4>
+            <h4 style="font-size:14px;color:#1a5276;margin-bottom:8px;font-weight:600;">📊 Предпросмотр данных</h4>
             <div style="overflow-x:auto;background:#ffffff;border-radius:10px;padding:10px;border:1px solid #e8f0f5;">
                 <table id="previewTable"></table>
             </div>
@@ -360,14 +361,14 @@ auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700
 
     <!-- ВКЛАДКИ ФИЛИАЛОВ -->
     <div class="tabs">
-        <button class="tab-btn active" data-tab="tab0">🏥  ОБУЗ "КГДП"<span class="addr">пр-т Энтузиастов, д. 18</span></button>
-        <button class="tab-btn" data-tab="tab1">🏥  Филиал №1<span class="addr">ул. Сумская, д. 37-б</span></button>
-        <button class="tab-btn" data-tab="tab2">🏥  Филиал №2<span class="addr">ул. Верхняя Казацкая, д. 152</span></button>
-        <button class="tab-btn" data-tab="tab3">🧪  Лаборатория / Стационар</button>
+        <button class="tab-btn active" data-tab="tab0">🏥 ОБУЗ "КГДП"<span class="addr">пр-т Энтузиастов, д. 18</span></button>
+        <button class="tab-btn" data-tab="tab1">🏥 Филиал №1<span class="addr">ул. Сумская, д. 37-б</span></button>
+        <button class="tab-btn" data-tab="tab2">🏥 Филиал №2<span class="addr">ул. Верхняя Казацкая, д. 152</span></button>
+        <button class="tab-btn" data-tab="tab3">🧪 Лаборатория / Стационар</button>
     </div>
 
     <div id="tab0" class="tab-content active"><div class="table-wrap"><table><thead><tr><th>ВРАЧ</th><th>Кабинет/Участок</th><th>ПН</th><th>ВТ</th><th>СР</th><th>ЧТ</th><th>ПТ</th><th>СБ</th><th>ВС</th></tr></thead><tbody id="tab0-body"></tbody></table></div></div>
-<div id="tab1" class="tab-content"><div class="table-wrap"><table><thead><tr><th>ВРАЧ</th><th>Кабинет/Участок</th><th>ПН</th><th>ВТ</th><th>СР</th><th>ЧТ</th><th>ПТ</th><th>СБ</th><th>ВС</th></tr></thead><tbody id="tab1-body"></tbody></table></div></div>
+    <div id="tab1" class="tab-content"><div class="table-wrap"><table><thead><tr><th>ВРАЧ</th><th>Кабинет/Участок</th><th>ПН</th><th>ВТ</th><th>СР</th><th>ЧТ</th><th>ПТ</th><th>СБ</th><th>ВС</th></tr></thead><tbody id="tab1-body"></tbody></table></div></div>
     <div id="tab2" class="tab-content"><div class="table-wrap"><table><thead><tr><th>ВРАЧ</th><th>Кабинет/Участок</th><th>ПН</th><th>ВТ</th><th>СР</th><th>ЧТ</th><th>ПТ</th><th>СБ</th><th>ВС</th></tr></thead><tbody id="tab2-body"></tbody></table></div></div>
     <div id="tab3" class="tab-content"><div class="table-wrap"><table><thead><tr><th>Подразделение</th><th>Кабинет/Участок</th><th>ПН</th><th>ВТ</th><th>СР</th><th>ЧТ</th><th>ПТ</th><th>СБ</th><th>ВС</th></tr></thead><tbody id="tab3-body"></tbody></table></div></div>
 
@@ -383,7 +384,7 @@ auto;min-width:0}.tab-btn .addr{font-size:9px}table{font-size:11px;min-width:700
 
 <div class="password-overlay" id="passwordOverlay">
     <div class="password-box">
-        <h2>🔐  Доступ к админке</h2>
+        <h2>🔐 Доступ к админке</h2>
         <p>Введите пароль для управления расписанием</p>
         <input type="password" id="passwordInput" placeholder="Введите пароль" maxlength="10">
         <div class="error" id="passwordError">❌ Неверный пароль</div>
@@ -461,19 +462,20 @@ window.closeAdmin = function() {
 };
 
 // ================================================================
-// ИСПРАВЛЕННЫЙ ПАРСИНГ EXCEL
+// ПАРСИНГ EXCEL
 // ================================================================
 
 function smartParseExcel(data) {
     try {
-        var workbook = XLSX.read(data, {type: 'array', cellDates: true, raw: false});
+        var workbook = XLSX.read(data, {type: 'array'});
         var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-var json = XLSX.utils.sheet_to_json(firstSheet, {header: 1, defval: '', raw: false});
+        var json = XLSX.utils.sheet_to_json(firstSheet, {header: 1, defval: ''});
         
-        console.log('📊  Всего строк:', json.length);
+        console.log('📊 Всего строк:', json.length);
         
         var headerRowIndex = -1;
         var dayCols = [];
+        var dayNames = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
         var fullDayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
         
         for (var i = 0; i < Math.min(json.length, 50); i++) {
@@ -506,9 +508,8 @@ var json = XLSX.utils.sheet_to_json(firstSheet, {header: 1, defval: '', raw: fal
                 var tempCols = [];
                 for (var j = 0; j < row.length; j++) {
                     var cell = String(row[j] || '').trim();
-                    var dayIdx = fullDayNames.indexOf(cell);
-                    if (dayIdx !== -1) {
-                        tempCols[dayIdx] = j;
+                    if (fullDayNames.indexOf(cell) !== -1) {
+                        tempCols[fullDayNames.indexOf(cell)] = j;
                         found++;
                     }
                 }
@@ -536,47 +537,33 @@ var json = XLSX.utils.sheet_to_json(firstSheet, {header: 1, defval: '', raw: fal
             'детская хирургия', 'детская эндокринология', 'неврология', 'нефрология',
             'физиотерапия', 'стоматология'];
         
-        var nameRegex = /^[А-ЯЁ][а-яё]+\s+([А-ЯЁ]\.\s*([А-ЯЁ]\.)?|[А-ЯЁ][а-яё]+\s+[А-ЯЁ][а-яё]+|[А-ЯЁ][а-яё]+)/;
-
         for (var i = headerRowIndex + 1; i < json.length; i++) {
             var row = json[i];
             if (!row || row.length < 2) continue;
             
             var firstCell = String(row[0] || '').trim();
             var secondCell = String(row[1] || '').trim();
-
+            
             if (firstCell === '' && secondCell === '') continue;
             if (/\d{2}\.\d{2}/.test(firstCell) && firstCell.length <= 6) continue;
             
-            var skipWords = ['расписание', 'распечатано', 'Д-наблюдение', 
+            var skipWords = ['расписание', 'Расписание', 'распечатано', 'Д-наблюдение', 
                 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
-            if (skipWords.some(function(w) { return firstCell.toLowerCase().includes(w.toLowerCase()); })) continue;
-var isSpec = specKeywords.some(function(w) { 
+            if (skipWords.some(function(w) { return firstCell.includes(w); })) continue;
+            
+            var isSpec = specKeywords.some(function(w) { 
                 return firstCell.toLowerCase().includes(w) || secondCell.toLowerCase().includes(w); 
             });
             if (isSpec && firstCell.length > 3 && !firstCell.includes('м/с')) {
                 currentSpec = firstCell;
                 continue;
             }
-
-            var docName = '';
-            var cabInfo = '';
-            var nameColIdx = -1;
-
-            for (var col = 0; col < Math.min(row.length, 3); col++) {
-                var cellVal = String(row[col] || '').trim();
-                if (nameRegex.test(cellVal) || cellVal.toLowerCase().includes('м/с') || cellVal.toLowerCase().includes('медсестра')) {
-                    if (!cellVal.toLowerCase().includes('уч.') && !cellVal.toLowerCase().includes('каб.')) {
-                        nameColIdx = col;
-                        docName = cellVal;
-                        break;
-                    }
-                }
-            }
-
-            if (nameColIdx === -1 || !docName || docName.length < 3) continue;
-
-            cabInfo = (nameColIdx === 0 ? secondCell : String(row[0] || '').trim()) || '—';
+            
+            var isName = /[А-Яа-яЁё]+\s+[А-Яа-яЁё]\./.test(firstCell) || 
+                         firstCell.includes('м/с') || 
+                         firstCell.includes('медсестра');
+            if (firstCell.includes('уч.') || firstCell.includes('каб.')) continue;
+            if (!isName || firstCell.length < 3) continue;
             
             var hours = [null];
             var hasTime = false;
@@ -591,15 +578,15 @@ var isSpec = specKeywords.some(function(w) {
             if (!hasTime) continue;
             
             var filialKey = 'filial0';
-            var fullText = (docName + ' ' + cabInfo + ' ' + currentSpec).toLowerCase();
+            var fullText = (firstCell + ' ' + secondCell + ' ' + currentSpec).toLowerCase();
             if (fullText.includes('ф1') || fullText.includes('сумская') || fullText.includes('клыкова')) filialKey = 'filial1';
             else if (fullText.includes('ф2') || fullText.includes('казацкая') || fullText.includes('верхняя')) filialKey = 'filial2';
             else if (fullText.includes('лаборатория') || fullText.includes('стационар')) filialKey = 'filial3';
             
             doctors.push({
-                name: docName,
-                cabinet: cabInfo,
-                spec: currentSpec || '👶  Педиатрия',
+                name: firstCell,
+                cabinet: secondCell || '—',
+                spec: currentSpec || '👶 Педиатрия',
                 hours: hours,
                 filial: filialKey
             });
@@ -643,14 +630,16 @@ async function processImage(file) {
         await worker.terminate();
         
         var text = result.data.text;
-        console.log('📸  Распознанный текст:', text);
-progress.style.display = 'none';
+        console.log('📸 Распознанный текст:', text);
+        
+        progress.style.display = 'none';
         
         if (!text || text.length < 10) {
             showAdminStatus('❌ Не удалось распознать текст. Попробуйте другой скриншот.', 'error');
             return;
         }
         
+        // Парсим распознанный текст
         var parsed = parseTextTable(text);
         if (parsed) {
             uploadedData = parsed;
@@ -678,7 +667,7 @@ async function processWord(file) {
         var arrayBuffer = await file.arrayBuffer();
         var result = await mammoth.extractRawText({arrayBuffer: arrayBuffer});
         var text = result.value;
-        console.log('📄  Текст из Word:', text);
+        console.log('📄 Текст из Word:', text);
         
         if (!text || text.length < 10) {
             showAdminStatus('❌ Word-файл пустой.', 'error');
@@ -701,7 +690,7 @@ async function processWord(file) {
 }
 
 // ================================================================
-// ПАРСИНГ ТЕКСТА
+// ПАРСИНГ ТЕКСТА (общий для OCR, Word, таблицы)
 // ================================================================
 
 function parseTextTable(text) {
@@ -715,6 +704,7 @@ function parseTextTable(text) {
             'стоматолог', 'ультразвук', 'лаборатория', 'стационар'];
         
         lines.forEach(function(line) {
+            // Разделяем по ; или табуляции
             var parts = line.split(/[;\t|]/).map(function(p) { return p.trim(); });
             if (parts.length < 3) return;
             
@@ -724,8 +714,8 @@ function parseTextTable(text) {
             if (firstCell === '' || firstCell.length < 2) return;
             if (/\d{2}\.\d{2}/.test(firstCell) && firstCell.length <= 6) return;
             
-            var skipWords = ['расписание', 'распечатано', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
-            if (skipWords.some(function(w) { return firstCell.toLowerCase().includes(w.toLowerCase()); })) return;
+            var skipWords = ['расписание', 'Расписание', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+            if (skipWords.some(function(w) { return firstCell.includes(w); })) return;
             
             var isSpec = specKeywords.some(function(w) { return firstCell.toLowerCase().includes(w); });
             if (isSpec && firstCell.length > 3 && !firstCell.includes('м/с')) {
@@ -738,7 +728,7 @@ function parseTextTable(text) {
             
             var hours = [null];
             var hasTime = false;
-for (var d = 2; d < Math.min(parts.length, 9); d++) {
+            for (var d = 2; d < Math.min(parts.length, 9); d++) {
                 var cell = parts[d] || '—';
                 if (cell !== '—' && cell !== '' && cell !== '-') hasTime = true;
                 if (cell === '' || cell === '-') cell = '—';
@@ -756,7 +746,7 @@ for (var d = 2; d < Math.min(parts.length, 9); d++) {
             doctors.push({
                 name: firstCell,
                 cabinet: secondCell || '—',
-                spec: currentSpec || '👶  Педиатрия',
+                spec: currentSpec || '👶 Педиатрия',
                 hours: hours,
                 filial: filialKey
             });
@@ -781,7 +771,7 @@ for (var d = 2; d < Math.min(parts.length, 9); d++) {
 function parseTableText() {
     var text = document.getElementById('tableTextInput').value.trim();
     if (!text) {
-        showAdminStatus('⚠️  Введите данные таблицы.', 'error');
+        showAdminStatus('⚠️ Введите данные таблицы.', 'error');
         return;
     }
     
@@ -807,7 +797,7 @@ function loadDataFromFirestore() {
         if (snapshot.exists()) {
             allData = snapshot.data();
             renderAllTables();
-            document.getElementById('statusBadge').textContent = '🟢  LIVE';
+            document.getElementById('statusBadge').textContent = '🟢 LIVE';
             document.getElementById('statusBadge').className = 'online-badge';
             document.getElementById('statusText').textContent = 'Данные актуальны (Real-time)';
             updateLastUpdate();
@@ -815,15 +805,15 @@ function loadDataFromFirestore() {
         } else {
             allData = {filial0: [], filial1: [], filial2: [], filial3: []};
             renderAllTables();
-            document.getElementById('statusBadge').textContent = '🔴  НЕТ ДАННЫХ';
+            document.getElementById('statusBadge').textContent = '🔴 НЕТ ДАННЫХ';
             document.getElementById('statusBadge').className = 'online-badge offline';
             document.getElementById('statusText').textContent = 'Нет расписания';
         }
     }, (error) => {
         console.warn('Ошибка Firestore:', error);
-        document.getElementById('statusBadge').textContent = '🔴  OFFLINE';
+        document.getElementById('statusBadge').textContent = '🔴 OFFLINE';
         document.getElementById('statusBadge').className = 'online-badge offline';
-        document.getElementById('statusText').textContent = '⚠️  Офлайн-режим';
+        document.getElementById('statusText').textContent = '⚠️ Офлайн-режим';
         isConnected = false;
     });
 }
@@ -833,7 +823,7 @@ function loadDataFromFirestore() {
 // ================================================================
 
 function getWeekDates(offset) {
-var start = new Date(baseDate);
+    var start = new Date(baseDate);
     start.setDate(start.getDate() + offset * 7);
     var dates = [];
     for (var i = 0; i < 7; i++) {
@@ -855,7 +845,7 @@ function renderTable(tbodyId, filialKey) {
     var html = '';
     var currentSpec = '';
     doctors.forEach(function(doc) {
-        var spec = doc.spec || '👶  Педиатрия';
+        var spec = doc.spec || '👶 Педиатрия';
         if (spec !== currentSpec) {
             currentSpec = spec;
             html += '<tr class="spec-row"><td colspan="9">' + spec + '</td></tr>';
@@ -899,7 +889,7 @@ function renderAllTables() {
 
 function updateLastUpdate() {
     var el = document.getElementById('updateDate');
-    if (el) el.textContent = '🔄  Обновлено: ' + new Date().toLocaleTimeString('ru-RU');
+    if (el) el.textContent = '🔄 Обновлено: ' + new Date().toLocaleTimeString('ru-RU');
 }
 
 function showPreview(data) {
@@ -931,7 +921,7 @@ function showPreview(data) {
 }
 
 async function saveToFirestore(data) {
-try {
+    try {
         await setDoc(doc(db, "schedule", "main"), data);
         showToast('✅ Данные опубликованы!', 'success');
         showAdminStatus('✅ Данные успешно опубликованы!', 'success');
@@ -947,7 +937,7 @@ async function clearFirestore() {
     if (!confirm('Вы уверены? Все данные будут удалены.')) return;
     try {
         await deleteDoc(doc(db, "schedule", "main"));
-        showToast('🗑️  Данные очищены', 'success');
+        showToast('🗑️ Данные очищены', 'success');
         showAdminStatus('✅ Данные удалены', 'success');
         document.getElementById('adminPreview').className = 'preview';
         document.getElementById('adminStats').style.display = 'none';
@@ -966,11 +956,11 @@ async function clearFirestore() {
 function addManualDoctor() {
     var name = document.getElementById('manualName').value.trim();
     var cabinet = document.getElementById('manualCabinet').value.trim();
-    var spec = document.getElementById('manualSpec').value.trim() || '👶  Педиатрия';
+    var spec = document.getElementById('manualSpec').value.trim() || '👶 Педиатрия';
     var filial = document.getElementById('manualFilial').value;
     
     if (!name || !cabinet) {
-        showAdminStatus('⚠️  Заполните ФИО и Кабинет.', 'error');
+        showAdminStatus('⚠️ Заполните ФИО и Кабинет.', 'error');
         return;
     }
     
@@ -985,7 +975,7 @@ function addManualDoctor() {
     while (hours.length < 8) hours.push('—');
     
     if (!hasTime) {
-        showAdminStatus('⚠️  Заполните время хотя бы для одного дня.', 'error');
+        showAdminStatus('⚠️ Заполните время хотя бы для одного дня.', 'error');
         return;
     }
     
@@ -1023,7 +1013,7 @@ function updateManualList() {
 
 async function publishManualDoctors() {
     if (manualDoctors.length === 0) {
-        showAdminStatus('⚠️  Нет врачей для публикации.', 'error');
+        showAdminStatus('⚠️ Нет врачей для публикации.', 'error');
         return;
     }
     var combined = allData ? JSON.parse(JSON.stringify(allData)) : {filial0: [], filial1: [], filial2: [], filial3: []};
@@ -1035,6 +1025,7 @@ async function publishManualDoctors() {
     updateManualList();
     showToast('✅ Все врачи опубликованы!', 'success');
 }
+
 // ================================================================
 // ПАРОЛЬ
 // ================================================================
@@ -1130,7 +1121,7 @@ function processFile(file) {
                 uploadedData = parsed;
                 showPreview(parsed);
                 var total = Object.keys(parsed).reduce(function(s, k) { return s + parsed[k].length; }, 0);
-showAdminStatus('✅ Файл обработан! Найдено врачей: ' + total, 'success');
+                showAdminStatus('✅ Файл обработан! Найдено врачей: ' + total, 'success');
                 document.getElementById('uploadBtn').disabled = false;
             }
         } catch (err) {
@@ -1173,12 +1164,12 @@ wordInput.addEventListener('change', function() {
 // Кнопки
 document.getElementById('uploadBtn').addEventListener('click', function() {
     if (uploadedData) saveToFirestore(uploadedData);
-    else showAdminStatus('⚠️  Сначала загрузите файл.', 'error');
+    else showAdminStatus('⚠️ Сначала загрузите файл.', 'error');
 });
 
 document.getElementById('previewBtn').addEventListener('click', function() {
-    if (uploadedData) { showPreview(uploadedData); showToast('👁️  Предпросмотр', 'success'); }
-    else showAdminStatus('⚠️  Сначала загрузите файл.', 'error');
+    if (uploadedData) { showPreview(uploadedData); showToast('👁️ Предпросмотр', 'success'); }
+    else showAdminStatus('⚠️ Сначала загрузите файл.', 'error');
 });
 
 document.getElementById('clearBtn').addEventListener('click', clearFirestore);
@@ -1187,7 +1178,7 @@ document.getElementById('publishManualBtn').addEventListener('click', publishMan
 document.getElementById('parseTableBtn').addEventListener('click', parseTableText);
 document.getElementById('publishTableBtn').addEventListener('click', function() {
     if (uploadedData) saveToFirestore(uploadedData);
-    else showAdminStatus('⚠️  Сначала разберите таблицу.', 'error');
+    else showAdminStatus('⚠️ Сначала разберите таблицу.', 'error');
 });
 
 window.exportExcel = function() {
@@ -1216,26 +1207,26 @@ window.exportExcel = function() {
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
-a.download = 'schedule_' + new Date().toISOString().slice(0,10) + '.xlsx';
+        a.download = 'schedule_' + new Date().toISOString().slice(0,10) + '.xlsx';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast('📊  Excel файл создан!', 'success');
+        showToast('📊 Excel файл создан!', 'success');
     } catch(e) {
         showToast('❌ Ошибка экспорта', 'error');
     }
 };
 
 window.forceRefresh = function() {
-    if (isConnected) { showToast('🔄  Данные обновлены', 'success'); updateLastUpdate(); }
-    else showToast('⚠️  Нет подключения', 'error');
+    if (isConnected) { showToast('🔄 Данные обновлены', 'success'); updateLastUpdate(); }
+    else showToast('⚠️ Нет подключения', 'error');
 };
 
 window.removeManualDoctor = removeManualDoctor;
 
 // ================================================================
-// НАВИГАЦИЯ И ВРЕМЯ
+// НАВИГАЦИЯ
 // ================================================================
 
 document.querySelectorAll('.tabs .tab-btn').forEach(function(btn) {
@@ -1271,11 +1262,9 @@ updateClock();
 
 loadDataFromFirestore();
 
-<!-- test deploy -->
-
 console.log('✅ КГДП Расписание загружено!');
-console.log('🔐  5 кликов по "ДП" → пароль 12345');
-console.log('📁  Режимы: Excel, Скриншот (OCR), Word, Ручной ввод, Таблица');
+console.log('🔐 5 кликов по "ДП" → пароль 12345');
+console.log('📁 Режимы: Excel, Скриншот (OCR), Word, Ручной ввод, Таблица');
 </script>
 </body>
 </html>
