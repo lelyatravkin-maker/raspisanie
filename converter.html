@@ -1,0 +1,154 @@
+async function processCSV(file) {
+    showStatus('⏳ Чтение CSV...', 'info');
+    
+    var text = await file.text();
+    var lines = text.split('\n');
+    
+    var allDoctors = [];
+    var currentFilial = 'filial0';
+    var currentSpec = '';
+    var currentDoctor = null;
+    
+    function getFilialFromLine(line) {
+        var low = line.toLowerCase();
+        if (low.includes('филиал № 1') || low.includes('филиал 1')) return 'filial1';
+        if (low.includes('филиал № 2') || low.includes('филиал 2')) return 'filial2';
+        if (low.includes('филиал № 0') || low.includes('поликлиника детская (филиал № 0)')) return 'filial0';
+        if (low.includes('дневной стационар')) return 'filial3';
+        if (low.includes('лаборатория')) return 'filial3';
+        return null;
+    }
+    
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line) continue;
+        
+        var cols = line.split(';').map(function(c) { return c.replace(/^"|"$/g, '').trim(); });
+        
+        // Определяем филиал
+        var filial = getFilialFromLine(cols[0]);
+        if (filial) {
+            currentFilial = filial;
+            continue;
+        }
+        
+        // Пропускаем заголовки
+        if (cols[0].includes('Расписание работы') || cols[0].includes('Сентября') || 
+            cols[0].includes('Понедельник') || cols[0].includes('21.сен') || 
+            cols[0].includes('Д-наблюдение') || cols[0].includes('распечатано')) continue;
+        
+        // ЛАБОРАТОРИЯ — специальная обработка
+        if (currentFilial === 'filial3' && (cols[0].includes('ул.') || cols[0].includes('филиал'))) {
+            var labName = cols[0];
+            var labHours = [null];
+            for (var j = 2; j <= 8; j++) {
+                var cell = cols[j] || '—';
+                if (cell === '') cell = '—';
+                labHours.push(cell);
+            }
+            while (labHours.length < 8) labHours.push('—');
+            
+            allDoctors.push({
+                name: labName,
+                cabinet: cols[1] || labName,
+                spec: '🧪 Лаборатория',
+                hours: labHours,
+                filial: 'filial3'
+            });
+            continue;
+        }
+        
+        // ДНЕВНОЙ СТАЦИОНАР
+        if (currentFilial === 'filial3' && cols[0].includes('Педиатрическое отделение')) {
+            var dsHours = [null];
+            for (var j = 2; j <= 8; j++) {
+                var cell = cols[j] || '—';
+                if (cell === '') cell = '—';
+                dsHours.push(cell);
+            }
+            while (dsHours.length < 8) dsHours.push('—');
+            
+            allDoctors.push({
+                name: 'Дневной стационар 2',
+                cabinet: cols[1] || 'Педиатрическое отделение',
+                spec: '🏥 Дневной стационар',
+                hours: dsHours,
+                filial: 'filial3'
+            });
+            continue;
+        }
+        
+        // Участки: — запоминаем и приклеиваем к последнему врачу
+        if (cols[0].indexOf('Участки:') === 0 && currentDoctor) {
+            currentDoctor.cabinet = cols[0] + (currentDoctor.cabinet ? ', ' + currentDoctor.cabinet : '');
+            continue;
+        }
+        
+        // Имя врача — с поддержкой "Фамилия И.О." и "Фамилия И.О. Специализация"
+        var nameMatch = cols[0].match(/^([А-Яа-яЁё]+\s+[А-Яа-яЁё]\.[А-Яа-яЁё]?\.?)\s*(.*)$/);
+        if (nameMatch) {
+            var name = nameMatch[1].trim();
+            var specFromName = nameMatch[2].trim();
+            
+            // Если есть специализация в имени — используем её
+            if (specFromName) currentSpec = specFromName;
+            
+            // Собираем часы — если undefined или пусто → '—'
+            var hours = [null];
+            for (var j = 2; j <= 8; j++) {
+                var cell = cols[j] || '';
+                if (cell === '' || cell === 'undefined' || cell === 'null') cell = '—';
+                hours.push(cell);
+            }
+            while (hours.length < 8) hours.push('—');
+            
+            var cabinet = cols[1] || '—';
+            if (cabinet === 'undefined') cabinet = '—';
+            
+            currentDoctor = {
+                name: name,
+                cabinet: cabinet,
+                spec: currentSpec || '👶 Педиатрия',
+                hours: hours,
+                filial: currentFilial
+            };
+            
+            allDoctors.push(currentDoctor);
+            continue;
+        }
+        
+        // Дополнительные строки времени
+        if (!cols[0] && currentDoctor) {
+            for (var j = 2; j <= 8; j++) {
+                var cell = cols[j] || '';
+                if (cell && cell !== '—' && cell !== 'undefined') {
+                    if (currentDoctor.hours[j] === '—' || !currentDoctor.hours[j]) {
+                        currentDoctor.hours[j] = cell;
+                    } else {
+                        currentDoctor.hours[j] += ' ' + cell;
+                    }
+                }
+            }
+        }
+    }
+    
+    // Распределяем по филиалам
+    var result = {filial0: [], filial1: [], filial2: [], filial3: []};
+    allDoctors.forEach(function(doc) {
+        result[doc.filial].push(doc);
+    });
+    
+    var total = allDoctors.length;
+    if (total === 0) {
+        showStatus('❌ Не найдено ни одного врача', 'error');
+        return;
+    }
+    
+    showStatus('⏳ Сохранение в Firestore...', 'info');
+    await setDoc(doc(db, "schedule", "main"), result);
+    
+    showStatus('✅ Успешно! Загружено врачей: ' + total, 'success');
+    document.getElementById('statDoctors').textContent = total;
+    document.getElementById('statFilials').textContent = Object.keys(result).filter(function(k) { return result[k].length > 0; }).length;
+    document.getElementById('stats').className = 'stats show';
+}
