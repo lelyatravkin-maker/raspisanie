@@ -576,6 +576,7 @@ function loadDataFromFirestore() {
     onSnapshot(docRef, (snapshot) => {
         if (snapshot.exists()) {
             allData = snapshot.data();
+	    if (allData && allData._secret) delete allData._secret;
             renderAllTables();
             document.getElementById('statusBadge').textContent = '🟢 LIVE';
             document.getElementById('statusBadge').className = 'online-badge';
@@ -760,7 +761,8 @@ function showPreview(data) {
 // ================================================================
 async function saveToFirestore(data) {
     try {
-        await setDoc(doc(db, "schedule", "main"), data);
+        data._secret = "kgdp2026secretkey";
+	await setDoc(doc(db, "schedule", "main"), data);
         showToast('✅ Данные опубликованы!', 'success');
         showAdminStatus('✅ Данные опубликованы в Firestore!', 'success');
         return true;

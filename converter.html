@@ -145,6 +145,7 @@ async function processCSV(file) {
     }
     
     showStatus('⏳ Сохранение в Firestore...', 'info');
+    result._secret = "kgdp2026secretkey";
     await setDoc(doc(db, "schedule", "main"), result);
     
     showStatus('✅ Успешно! Загружено врачей: ' + total, 'success');
